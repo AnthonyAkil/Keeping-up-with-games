@@ -113,12 +113,21 @@ for batch_index, offset_batch in enumerate(offset_batches, start = 1):
         data = response.json()
         
         for subquery in range(len(data)):
-            batch_results.extend(data[subquery]["result"])
+            batch_results.extend(data[subquery].get("result", []))  # Ensures failed batch calls return an empty list
             
         if batch_results:
-            dataframes.append(pl.DataFrame(batch_results))
+            df = pl.DataFrame(batch_results)
+            
+            # Ensure uniform columns across dataframes:
+            for col in data_field_names.split(", "):
+                if col not in df.columns:
+                    df = df.with_columns(pl.lit(None).alias(col))
+            df = df.select(data_field_names.split(", "))    # Unfirom column ordering  
+            dataframes.append(df)
+            
         else:
             print(f"Empty batch on {batch_index}/{num_api_calls}")
+        
         time.sleep(rate_limit_delay)
         
     except requests.exceptions.RequestException as e:
@@ -129,4 +138,6 @@ for batch_index, offset_batch in enumerate(offset_batches, start = 1):
         
  
 merged_dataframe = pl.concat(dataframes, how = "vertical")
-merged_dataframe.write_parquet(local_output_file, compression = "zstd", compression_level = 3) # zstd:3 is a good tradeoff between compression-read for analytical ELT
+merged_dataframe.write_parquet(local_output_file, compression = "zstd", compression_level = 3) # zstd:3 -> tradeoff between compression-read for analytical ELT
+
+
