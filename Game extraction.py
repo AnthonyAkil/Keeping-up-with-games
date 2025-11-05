@@ -30,7 +30,7 @@ multiquery_size_limit :int  = 10
 auth_url : str    = "https://id.twitch.tv/oauth2/token"
 url      : str    = "https://api.igdb.com/v4/"
 
-data_field_names : str = "id, name, first_release_date, game_modes, game_type, game_status, genres, platforms, total_rating, total_rating_count, dlcs, franchise, hypes"
+data_field_names : str = "id, name, first_release_date, game_modes, game_type, genres, platforms, total_rating, total_rating_count, franchise, hypes"
 
 api_client_id = parser.get(
     "igdb_credentials",
@@ -61,7 +61,7 @@ bucket_name = parser.get(
 )
 
 filename = f"igdb_api_data_{datetime.today().strftime("%Y%m%d")}"
-output_path = f"s3://{bucket_name}/{filename}"
+output_path = f"s3://{bucket_name}/{filename}.parquet"
 
 storage_options = {
     "aws_access_key_id":        aws_access_key,
@@ -86,7 +86,6 @@ headers     = {
 # ============================================================================
 # Function setup
 # ============================================================================
-
 
 def get_total_games_count(base_url: str, input_headers : dict) -> int:
     
@@ -138,12 +137,6 @@ for batch_index, offset_batch in enumerate(offset_batches, start = 1):
             
         if batch_results:
             df = pl.DataFrame(batch_results)
-            
-            # Ensure uniform columns across dataframes:
-            for col in data_field_names.split(", "):
-                if col not in df.columns:
-                    df = df.with_columns(pl.lit(None).alias(col))
-            df = df.select(data_field_names.split(", "))    # Unfirom column ordering  
             dataframes.append(df)
             
         else:
@@ -157,13 +150,12 @@ for batch_index, offset_batch in enumerate(offset_batches, start = 1):
         time.sleep(5)
         continue
     
-    
 # ============================================================================
 # Load to AWS S3
 # ============================================================================
  
 if dataframes:
-    merged_dataframe = pl.concat(dataframes, how = "vertical")
+    merged_dataframe = pl.concat(dataframes, how = "diagonal")      #HACK: using diagonal to let Polars handle missing columns or mismatch across data types when concat
     
     merged_dataframe.write_parquet(
         output_path,
@@ -173,4 +165,4 @@ if dataframes:
     )
     print(f"Parquet file uploaded to {output_path}")
 else:
-    print("No data retrieved from the API.")
+    print("No data retrieved from the API.")    
