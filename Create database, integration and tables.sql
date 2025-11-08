@@ -31,16 +31,12 @@ CREATE STORAGE INTEGRATION IF NOT EXISTS IGDB_S3
 
 ---> pull relevant information (ARN) for AWS IAM role:
 DESC INTEGRATION IGDB_S3;
-
----> not required, but creating a fileformat for reusability:
-CREATE FILE FORMAT IF NOT EXISTS S3_parquet
-  TYPE = parquet;
   
 ---> create external stage
 CREATE STAGE IF NOT EXISTS IGDB.BRONZE.S3_stage
   STORAGE_INTEGRATION = IGDB_S3
   URL = 's3://keeping-up-with-games2/'
-  FILE_FORMAT = S3_parquet;
+  FILE_FORMAT = (TYPE = 'parquet');
 
 
 
@@ -60,7 +56,7 @@ CREATE TABLE IF NOT EXISTS IGDB.BRONZE.GAMES_RAW (
     platforms ARRAY,           
     total_rating NUMBER(5,2),        
     total_rating_count INT,                  
-    franchise TINYINT,           
+    franchises ARRAY,
     hypes SMALLINT )
 COMMENT = 'Table to be loaded from S3 raw data';
 
@@ -86,6 +82,11 @@ CREATE TABLE IF NOT EXISTS IGDB.BRONZE.FRANCHISE_RAW (
     name VARCHAR(255)      
 );
 
+CREATE TABLE IF NOT EXISTS IGDB.BRONZE.GAMETYPE_RAW (
+    id SMALLINT PRIMARY KEY,               
+    type VARCHAR(255)      
+);
+
 
 
 
@@ -104,11 +105,14 @@ CREATE TABLE IF NOT EXISTS IGDB.GOLD.BRIDGE_GENRE (
     "Genre ID" TINYINT
 );
 
-
+CREATE TABLE IF NOT EXISTS IGDB.GOLD.BRIDGE_FRANCHISE (
+    "Game ID" SMALLINT,
+    "Franchise ID" TINYINT
+);
 
 CREATE TABLE IF NOT EXISTS IGDB.GOLD.BRIDGE_PLATFORM (
     "Game ID" SMALLINT,
-    "PLATFORM ID" TINYINT
+    "Platform ID" TINYINT
 );
 
 CREATE TABLE IF NOT EXISTS IGDB.GOLD.DIM_GAMEMODE (
@@ -131,15 +135,19 @@ CREATE TABLE IF NOT EXISTS IGDB.GOLD.DIM_FRANCHISE (
     "Franchise name" VARCHAR(255)
 );
 
+CREATE TABLE IF NOT EXISTS IGDB.GOLD.DIM_GAMETYPE (
+    "Game type ID" TINYINT PRIMARY KEY,
+    "Game type name" VARCHAR(255)
+);
+
 
 ---> create the Fact table to land each game
 CREATE TABLE IF NOT EXISTS IGDB.GOLD.GAMES (
     "Game ID" SMALLINT PRIMARY KEY,               
     "Game name" VARCHAR(255),         
     "Initial release date" DATE,
-    "Game type" TINYINT,                  
+    "Game type ID" TINYINT,                  
     "Total rating" NUMBER(5,2),        
-    "Total rating count" INT,                  
-    "Franchise ID" TINYINT,           
+    "Total rating count" INT,        
     "Hypes" SMALLINT 
 );

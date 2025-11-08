@@ -22,9 +22,9 @@ USE DATABASE IGDB;
 TRUNCATE TABLE IGDB.BRONZE.GAMES_RAW;
 COPY INTO IGDB.BRONZE.GAMES_RAW
   FROM @IGDB.BRONZE.S3_stage
-  FILE_FORMAT = S3_parquet
+  FILE_FORMAT = (TYPE = 'parquet')
   MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
-  FILES = ('igdb_api_data_20251105.parquet');
+  FILES = ('igdb_api_data_20251107.parquet');
 
 
 
@@ -49,6 +49,14 @@ SELECT
 FROM IGDB.BRONZE.GAMES_RAW raw_games,
 LATERAL FLATTEN(input => raw_games.genres) unpacked;
 
+TRUNCATE TABLE IGDB.GOLD.BRIDGE_FRANCHISE;
+INSERT INTO IGDB.GOLD.BRIDGE_FRANCHISE
+SELECT 
+  raw_games.id AS "Game ID",
+  unpacked.value::TINYINT AS "Franchise ID"
+FROM IGDB.BRONZE.GAMES_RAW raw_games,
+LATERAL FLATTEN(input => raw_games.franchises) unpacked;
+
 TRUNCATE TABLE IGDB.GOLD.BRIDGE_PLATFORM;
 INSERT INTO IGDB.GOLD.BRIDGE_PLATFORM
 SELECT 
@@ -58,15 +66,15 @@ FROM IGDB.BRONZE.GAMES_RAW raw_games,
 LATERAL FLATTEN(input => raw_games.platforms) unpacked;
 
 
+
 TRUNCATE TABLE IGDB.GOLD.GAMES;
 INSERT INTO IGDB.GOLD.GAMES (
     "Game ID",               
     "Game name",         
     "Initial release date",
-    "Game type",                  
+    "Game type ID",                  
     "Total rating",        
-    "Total rating count",                  
-    "Franchise ID",           
+    "Total rating count",                           
     "Hypes" 
 )
 SELECT 
@@ -76,9 +84,5 @@ SELECT
     game_type,
     total_rating,
     total_rating_count,
-    franchise,
     hypes
 FROM IGDB.BRONZE.GAMES_RAW;
-
-
-;

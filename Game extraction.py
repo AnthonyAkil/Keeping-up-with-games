@@ -30,7 +30,7 @@ multiquery_size_limit :int  = 10
 auth_url : str    = "https://id.twitch.tv/oauth2/token"
 url      : str    = "https://api.igdb.com/v4/"
 
-data_field_names : str = "id, name, first_release_date, game_modes, game_type, genres, platforms, total_rating, total_rating_count, franchise, hypes"
+data_field_names : str = "id, name, first_release_date, game_modes, game_type, genres, platforms, total_rating, total_rating_count, franchises, hypes"
 
 api_client_id = parser.get(
     "igdb_credentials",

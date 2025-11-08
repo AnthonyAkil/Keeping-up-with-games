@@ -209,3 +209,9 @@ endpoints = ["game_modes", "genres", "platforms", "franchises"]
 for endpoint in endpoints:
     get_endpoint(url, headers, endpoint, "name")        # Pull only the name field for the dimension tables
     
+
+# HACK: Not DRY - but opting for quick deployment:
+endpoints = ["game_types"]
+
+for endpoint in endpoints:
+    get_endpoint(url, headers, endpoint, "type")        # game_types endpoint field of interest is different than the other endpoints
