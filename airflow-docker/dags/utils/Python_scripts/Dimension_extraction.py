@@ -13,6 +13,7 @@ from math import ceil
 import polars as pl
 from datetime import datetime
 import time
+from airflow.providers.http.hooks.http import HttpHook
 
 
 
@@ -200,18 +201,25 @@ def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_name
     
     
 # ============================================================================
-# Data extraction and load to AWS S3
+# Data extraction and load to AWS S3 with main execution wrapper
 # ============================================================================
     
 endpoints = ["game_modes", "genres", "platforms", "franchises"]
 
 
-for endpoint in endpoints:
-    get_endpoint(url, headers, endpoint, "name")        # Pull only the name field for the dimension tables
-    
 
-# HACK: Not DRY - but opting for quick deployment:
-endpoints = ["game_types"]
+def main():
 
-for endpoint in endpoints:
-    get_endpoint(url, headers, endpoint, "type")        # game_types endpoint field of interest is different than the other endpoints
+    for endpoint in endpoints:
+        get_endpoint(url, headers, endpoint, "name")        # Pull only the name field for the dimension tables
+        
+
+    # HACK: Not DRY - but opting for quick deployment:
+    endpoints = ["game_types"]
+
+    for endpoint in endpoints:
+        get_endpoint(url, headers, endpoint, "type")        # game_types endpoint field of interest is different than the other endpoints
+
+
+if __name__ == "__main__":
+    main()

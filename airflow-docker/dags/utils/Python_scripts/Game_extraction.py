@@ -103,66 +103,73 @@ def create_offset_batches(offset_list: list[int], step_size: int):
 
 
 # ============================================================================
-# Data extraction
+# Data extraction with main execution wrapper
 # ============================================================================
 
-total_games_count   = get_total_games_count(base_url = url, input_headers= headers)
-total_pages         = ceil(total_games_count / api_rate_limit)
-offsets             = [page_number * api_rate_limit for page_number in range(total_pages)]
-offset_batches      = list(create_offset_batches(offsets, multiquery_size_limit))
-num_api_calls       = len(offset_batches)
 
-dataframes = []
 
-for batch_index, offset_batch in enumerate(offset_batches, start = 1):
-    
-    multiquery = ""
-    for subquery_index, offset in enumerate(offset_batch):
-        multiquery += f"""
-        query games "page_{batch_index}_{subquery_index}" {{
-        fields {data_field_names};
-        limit {api_rate_limit};
-        offset {offset};
-    }};
-    """
-    
-    try:
-        response = requests.post(url + "multiquery", headers = headers, data = multiquery)
-        response.raise_for_status()
-        batch_results = []
-        data = response.json()
+def main():
+
+    total_games_count   = get_total_games_count(base_url = url, input_headers= headers)
+    total_pages         = ceil(total_games_count / api_rate_limit)
+    offsets             = [page_number * api_rate_limit for page_number in range(total_pages)]
+    offset_batches      = list(create_offset_batches(offsets, multiquery_size_limit))
+    num_api_calls       = len(offset_batches)
+
+    dataframes = []
+
+    for batch_index, offset_batch in enumerate(offset_batches, start = 1):
         
-        for subquery in range(len(data)):
-            batch_results.extend(data[subquery].get("result", []))  # Ensures failed batch calls return an empty list
+        multiquery = ""
+        for subquery_index, offset in enumerate(offset_batch):
+            multiquery += f"""
+            query games "page_{batch_index}_{subquery_index}" {{
+            fields {data_field_names};
+            limit {api_rate_limit};
+            offset {offset};
+        }};
+        """
+        
+        try:
+            response = requests.post(url + "multiquery", headers = headers, data = multiquery)
+            response.raise_for_status()
+            batch_results = []
+            data = response.json()
             
-        if batch_results:
-            df = pl.DataFrame(batch_results)
-            dataframes.append(df)
+            for subquery in range(len(data)):
+                batch_results.extend(data[subquery].get("result", []))  # Ensures failed batch calls return an empty list
+                
+            if batch_results:
+                df = pl.DataFrame(batch_results)
+                dataframes.append(df)
+                
+            else:
+                print(f"Empty batch on {batch_index}/{num_api_calls}")
             
-        else:
-            print(f"Empty batch on {batch_index}/{num_api_calls}")
+            time.sleep(rate_limit_delay)
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Error on batch {batch_index}: {e}")
+            print("Attempting to sleep 5 seconds before next call...")
+            time.sleep(5)
+            continue
         
-        time.sleep(rate_limit_delay)
+    # ============================================================================
+    # Load to AWS S3
+    # ============================================================================
+    
+    if dataframes:
+        merged_dataframe = pl.concat(dataframes, how = "diagonal")      #HACK: using diagonal to let Polars handle missing columns or mismatch across data types when concat
         
-    except requests.exceptions.RequestException as e:
-        print(f"Error on batch {batch_index}: {e}")
-        print("Attempting to sleep 5 seconds before next call...")
-        time.sleep(5)
-        continue
-    
-# ============================================================================
-# Load to AWS S3
-# ============================================================================
- 
-if dataframes:
-    merged_dataframe = pl.concat(dataframes, how = "diagonal")      #HACK: using diagonal to let Polars handle missing columns or mismatch across data types when concat
-    
-    merged_dataframe.write_parquet(
-        output_path,
-        storage_options = storage_options,
-        compression = "zstd",
-        compression_level = 3   # zstd:3 -> tradeoff between compression-read for analytical ELT
-    )
-    print(f"Parquet file uploaded to {output_path}")
-else:
-    print("No data retrieved from the API.")    
+        merged_dataframe.write_parquet(
+            output_path,
+            storage_options = storage_options,
+            compression = "zstd",
+            compression_level = 3   # zstd:3 -> tradeoff between compression-read for analytical ELT
+        )
+        print(f"Parquet file uploaded to {output_path}")
+    else:
+        print("No data retrieved from the API.")    
+
+if __name__ == "__main__":
+    main()
