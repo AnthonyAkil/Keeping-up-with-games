@@ -1,5 +1,5 @@
 """
-Internet Games Data Base (IGDB) API Data Extraction script
+Internet Games Data Base (IGDB) API Data Extraction script for daily usage - Fact tables
 Extracts game data from the IGDB API and prepares files for DWH ingestion.
 """
 
@@ -7,90 +7,63 @@ Extracts game data from the IGDB API and prepares files for DWH ingestion.
 # IMPORTS
 # ============================================================================
 
-import requests
-import configparser
 from math import ceil
 import time
 import polars as pl
 from datetime import datetime
-
+from airflow.providers.http.hooks.http import HttpHook
+from airflow.providers.amazon.aws.hooks.s3 import S3Hook
+from io import BytesIO
 
 
 # ============================================================================
 # Script Configuration
 # ============================================================================
-parser = configparser.ConfigParser()
-parser.read("credentials.conf")
-
 # API-related:
 api_rate_limit : int        = 500
 rate_limit_delay : float    = 0.25     # 1 request / 0.25s
 multiquery_size_limit :int  = 10
 
-auth_url : str    = "https://id.twitch.tv/oauth2/token"
-url      : str    = "https://api.igdb.com/v4/"
-
 data_field_names : str = "id, name, first_release_date, game_modes, game_type, genres, platforms, total_rating, total_rating_count, franchises, hypes"
 
-api_client_id = parser.get(
-    "igdb_credentials",
-    "client_id"
-)
-api_client_secret = parser.get(
-    "igdb_credentials",
-    "client_secret"
-)
-auth_params = {
-    "client_id":        api_client_id,
-    "client_secret":    api_client_secret,
-    "grant_type":       "client_credentials"
-} 
+# Connection IDs (configured in Airflow UI)
+IGDB_HTTP_CONN_ID = "igdb_api"
+IGDB_AUTH_CONN_ID = "igdb_auth"
+AWS_CONN_ID = "aws_s3"
 
-# AWS-related:
-aws_access_key = parser.get(
-    "aws_credentials",
-    "access_key"
-)
-aws_secret_key = parser.get(
-    "aws_credentials",
-    "secret_key"
-)
-bucket_name = parser.get(
-    "aws_credentials",
-    "bucket_name"
-)
-
-filename = f"igdb_api_data_{datetime.today().strftime("%Y%m%d")}"
-output_path = f"s3://{bucket_name}/{filename}.parquet"
-
-storage_options = {
-    "aws_access_key_id":        aws_access_key,
-    "aws_secret_access_key":    aws_secret_key,
-    "aws_region":               "eu-north-1"
-}
-
-
-# ============================================================================
-# Calling api access token
-# ============================================================================
-
-response = requests.post(auth_url, params = auth_params)
-access_token = response.json()["access_token"]
-headers     = {
-    "Client-ID":        api_client_id,
-    "Authorization":    f"Bearer {access_token}",
-    "Accept":           "application/json"
-}
+bucket_name = "keeping-up-with-games2" 
 
 
 # ============================================================================
 # Function setup
 # ============================================================================
 
-def get_total_games_count(base_url: str, input_headers : dict) -> int:
+def get_access_token():
+    """Get OAuth2 access token from Twitch"""
+    auth_hook = HttpHook(http_conn_id=IGDB_AUTH_CONN_ID, method='POST')
     
-    response = requests.post(base_url + "games/count", headers = input_headers)
-    response.raise_for_status()
+    # The client_id and client_secret should be in the connection extras
+    conn = auth_hook.get_connection(IGDB_AUTH_CONN_ID)
+    extra = conn.extra_dejson
+    
+    params = {
+        "client_id": extra.get("client_id"),
+        "client_secret": extra.get("client_secret"),
+        "grant_type": "client_credentials"
+    }
+    
+    response = auth_hook.run(
+        endpoint="oauth2/token",
+        data=params
+    )
+    
+    return response.json()["access_token"]
+
+def get_total_games_count(http_hook: HttpHook) -> int:
+    """Get total count of games from IGDB API"""
+    response = http_hook.run(
+        endpoint="games/count"
+    )
     return response.json()['count']
 
 def create_offset_batches(offset_list: list[int], step_size: int):
@@ -106,11 +79,37 @@ def create_offset_batches(offset_list: list[int], step_size: int):
 # Data extraction with main execution wrapper
 # ============================================================================
 
-
-
 def main():
+    """Main execution function"""
+    
+    # Initialize hooks
+    access_token = get_access_token()
+    
+    # Get client_id from auth connection
+    auth_conn = HttpHook.get_connection(IGDB_AUTH_CONN_ID)
+    client_id = auth_conn.extra_dejson.get("client_id")
+    
+    # Create HTTP hook with authorization headers
+    http_hook = HttpHook(
+        http_conn_id=IGDB_HTTP_CONN_ID,
+        method='POST'
+    )
+    
+    # Add headers to the hook
+    http_hook.headers = {
+        "Client-ID": client_id,
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/json"
+    }
+    
+    # Initialize S3 hook
+    s3_hook = S3Hook(aws_conn_id=AWS_CONN_ID)
+    
+    # Prepare S3 output path
+    filename = f"igdb_api_data_{datetime.today().strftime('%Y%m%d')}.parquet"
+    s3_key = filename
 
-    total_games_count   = get_total_games_count(base_url = url, input_headers= headers)
+    total_games_count   = get_total_games_count(http_hook=http_hook)
     total_pages         = ceil(total_games_count / api_rate_limit)
     offsets             = [page_number * api_rate_limit for page_number in range(total_pages)]
     offset_batches      = list(create_offset_batches(offsets, multiquery_size_limit))
@@ -131,8 +130,10 @@ def main():
         """
         
         try:
-            response = requests.post(url + "multiquery", headers = headers, data = multiquery)
-            response.raise_for_status()
+            response = http_hook.run(
+                endpoint="multiquery",
+                data=multiquery
+            )
             batch_results = []
             data = response.json()
             
@@ -148,7 +149,7 @@ def main():
             
             time.sleep(rate_limit_delay)
             
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             print(f"Error on batch {batch_index}: {e}")
             print("Attempting to sleep 5 seconds before next call...")
             time.sleep(5)
@@ -161,15 +162,25 @@ def main():
     if dataframes:
         merged_dataframe = pl.concat(dataframes, how = "diagonal")      #HACK: using diagonal to let Polars handle missing columns or mismatch across data types when concat
         
+        # Write to buffer
+        buffer = BytesIO()
         merged_dataframe.write_parquet(
-            output_path,
-            storage_options = storage_options,
-            compression = "zstd",
-            compression_level = 3   # zstd:3 -> tradeoff between compression-read for analytical ELT
+            buffer,
+            compression="zstd",
+            compression_level=3
         )
-        print(f"Parquet file uploaded to {output_path}")
+        buffer.seek(0)
+        
+        # Upload to S3
+        s3_hook.load_bytes(
+            bytes_data=buffer.getvalue(),
+            key=s3_key,
+            bucket_name=bucket_name,
+            replace=True
+        )
+        print(f"Parquet file uploaded to s3://{bucket_name}/{s3_key}")
     else:
-        print("No data retrieved from the API.")    
-
+        print("No data retrieved from the API.")
+          
 if __name__ == "__main__":
     main()
