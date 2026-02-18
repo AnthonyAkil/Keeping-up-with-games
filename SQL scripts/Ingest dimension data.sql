@@ -17,7 +17,7 @@ USE DATABASE IGDB;
 -- BRONZE TABLES
 -- #############################################################
 
-
+---> load using COPY INTO to retain reflection of source data):
 TRUNCATE TABLE IGDB.BRONZE.GAMEMODE_RAW;
 COPY INTO IGDB.BRONZE.GAMEMODE_RAW
   FROM @IGDB.BRONZE.S3_stage
@@ -61,52 +61,81 @@ COPY INTO IGDB.BRONZE.GAMETYPE_RAW
 -- #############################################################
 
 --> Ingest data from raw tables into Dimension tables
-TRUNCATE TABLE IGDB.GOLD.DIM_GAMEMODE;
-INSERT INTO IGDB.GOLD.DIM_GAMEMODE (
-    "Game mode ID",
-    "Game mode name"
-)
-SELECT 
-    id,
-    name
-FROM IGDB.BRONZE.GAMEMODE;
+--> Use Merge into pattern to uphold idempotent pipeline
+MERGE INTO IGDB.GOLD.DIM_GAMEMODE AS target
+USING (
+    SELECT 
+        id,
+        name
+    FROM IGDB.BRONZE.GAMEMODE_RAW
+) AS source
+ON target."Game mode ID" = source.id
+WHEN MATCHED THEN
+    UPDATE SET 
+        target."Game mode name" = source.name
+WHEN NOT MATCHED THEN
+    INSERT (target."Game mode ID", target."Game mode name")
+    VALUES (source.id, source.name);
 
-TRUNCATE TABLE IGDB.GOLD.DIM_GENRE;
-INSERT INTO IGDB.GOLD.DIM_GENRE (
-    "Genre ID",
-    "Genre name"
-)
-SELECT 
-    id,
-    name
-FROM IGDB.BRONZE.GENRE_RAW;
 
-TRUNCATE TABLE IGDB.GOLD.DIM_PLATFORM;
-INSERT INTO IGDB.GOLD.DIM_PLATFORM (
-    "Platform ID",
-    "Platform name"
-)
-SELECT 
-    id,
-    name
-FROM IGDB.BRONZE.PLATFORM_RAW;
+MERGE INTO IGDB.GOLD.DIM_GENRE AS target
+USING (
+    SELECT 
+        id,
+        name
+    FROM IGDB.BRONZE.GENRE_RAW
+) AS source
+ON target."Genre ID" = source.id
+WHEN MATCHED THEN
+    UPDATE SET 
+        target."Genre name" = source.name
+WHEN NOT MATCHED THEN
+    INSERT (target."Genre ID", target."Genre name")
+    VALUES (source.id, source.name);
 
-TRUNCATE TABLE IGDB.GOLD.DIM_FRANCHISE;
-INSERT INTO IGDB.GOLD.DIM_FRANCHISE (
-    "Franchise ID",
-    "Franchise name"
-)
-SELECT 
-    id,
-    name
-FROM IGDB.BRONZE.FRANCHISE_RAW;
 
-TRUNCATE TABLE IGDB.GOLD.DIM_GAMETYPE;
-INSERT INTO IGDB.GOLD.DIM_GAMETYPE (
-    "Game type ID",
-    "Game type name"
-)
-SELECT 
-    id,
-    type
-FROM IGDB.BRONZE.GAMETYPE_RAW;
+MERGE INTO IGDB.GOLD.DIM_PLATFORM AS target
+USING (
+    SELECT  
+        id,
+        name
+    FROM IGDB.BRONZE.PLATFORM_RAW
+) AS source
+ON target."Platform ID" = source.id
+WHEN MATCHED THEN
+    UPDATE SET
+      target."Platform name" = source.name
+WHEN NOT MATCHED THEN
+    INSERT ("Platform ID", "Platform name")
+    VALUES (source.id, source.name);
+
+
+MERGE INTO IGDB.GOLD.DIM_FRANCHISE AS target
+USING (
+    SELECT
+      id,
+      name
+    FROM IGDB.BRONZE.FRANCHISE_RAW
+) AS source
+ON target."Franchise ID" = source.id
+WHEN MATCHED THEN
+    UPDATE SET  
+      target."Franchise name" = source.name
+WHEN NOT MATCHED THEN
+    INSERT (target."Franchise ID", target."Franchise name")
+    VALUES (source.id, source.name);
+    
+
+MERGE INTO IDGB.GOLD.DIM_GAMETYPE AS target
+USING (
+    SELECT
+      id,
+      type
+    FROM IGDB.BRONZE.GAMETYPE_RAW
+) AS source
+ON target."Game type ID" = source.id
+WHEN MATCHED THEN 
+    UPDATE target."Game type name" = source.type
+WHEN NOT MATCHED THEN
+    INSERT (target."Game type ID", target."Game type name")
+    VALUES (source.id, source.type);

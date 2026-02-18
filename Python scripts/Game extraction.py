@@ -46,28 +46,29 @@ auth_params = {
     "grant_type":       "client_credentials"
 } 
 
-# AWS-related:
-aws_access_key = parser.get(
-    "aws_credentials",
-    "access_key"
-)
-aws_secret_key = parser.get(
-    "aws_credentials",
-    "secret_key"
-)
-bucket_name = parser.get(
-    "aws_credentials",
-    "bucket_name"
+# Azure-related:
+azure_account_name = parser.get(
+    "azure_credentials",
+    "account_name"         # Azure Blob Storage connection string
 )
 
-filename = f"igdb_api_data_{datetime.today().strftime("%Y%m%d")}"
-output_path = f"s3://{bucket_name}/{filename}.parquet"
+container_name = parser.get(
+    "azure_credentials",
+    "container_name"            # Name of Azure Blob Storage container
+)
+
+azure_access_key = parser.get(
+    "azure_credentials",
+    "access_key"         # Azure Blob Storage connection string
+)
 
 storage_options = {
-    "aws_access_key_id":        aws_access_key,
-    "aws_secret_access_key":    aws_secret_key,
-    "aws_region":               "eu-north-1"
+    "account_name": azure_account_name,
+    "account_key": azure_access_key,
 }
+
+filename = f"igdb_api_data_{datetime.today().strftime("%Y%m%d")}"
+output_path = f"az://{container_name}/{filename}"
 
 
 # ============================================================================
@@ -151,7 +152,7 @@ for batch_index, offset_batch in enumerate(offset_batches, start = 1):
         continue
     
 # ============================================================================
-# Load to AWS S3
+# Load to Azure Blob Container
 # ============================================================================
  
 if dataframes:

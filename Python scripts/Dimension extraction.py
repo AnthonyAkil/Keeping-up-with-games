@@ -45,24 +45,25 @@ auth_params = {
     "grant_type":       "client_credentials"
 } 
 
-# AWS-related:
-aws_access_key = parser.get(
-    "aws_credentials",
+# Azure-related:
+azure_account_name = parser.get(
+    "azure_credentials",
+    "account_name"
+)
+
+container_name = parser.get(
+    "azure_credentials",
+    "container_name"
+)
+
+azure_access_key = parser.get(
+    "azure_credentials",
     "access_key"
-)
-aws_secret_key = parser.get(
-    "aws_credentials",
-    "secret_key"
-)
-bucket_name = parser.get(
-    "aws_credentials",
-    "bucket_name"
 )
 
 storage_options = {
-    "aws_access_key_id":        aws_access_key,
-    "aws_secret_access_key":    aws_secret_key,
-    "aws_region":               "eu-north-1"
+    "account_name": azure_account_name,
+    "account_key": azure_access_key,
 }
 
 
@@ -101,11 +102,12 @@ def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_name
     
     today = datetime.now().strftime('%Y%m%d')
     filename = f"{endpoint}_{today}.parquet"
-    output_path = f"s3://{bucket_name}/{filename}"
+    output_path = f"az://{container_name}/{filename}"
+
     
     item_count = get_item_count(base_url, input_headers = input_headers, endpoint= endpoint)
     
-    if item_count <= 500:
+    if item_count <= api_rate_limit:
         try:
             params = {
                 "fields": field_names,       
@@ -200,7 +202,7 @@ def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_name
     
     
 # ============================================================================
-# Data extraction and load to AWS S3
+# Data extraction and load to Azure Blob Container
 # ============================================================================
     
 endpoints = ["game_modes", "genres", "platforms", "franchises"]
