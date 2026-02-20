@@ -22,28 +22,38 @@ CREATE SCHEMA IF NOT EXISTS IGDB.GOLD
   COMMENT = 'Schema for production-ready tables ';
 
 ---> Create Azure Blob Storage integration
-CREATE STORAGE INTEGRATION IGDB_AZURE_BLOB
+CREATE STORAGE INTEGRATION IF NOT EXISTS IGDB_AZURE_BLOB
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = 'AZURE'
   ENABLED = TRUE
   AZURE_TENANT_ID = '15e1619c-3dcc-49be-a66a-e8353d255aec'
-  STORAGE_ALLOWED_LOCATIONS = ('azure://storageigdbprojectrg.blob.core.windows.net/igdb-storage-container/*');
+  STORAGE_ALLOWED_LOCATIONS = ('azure://storageigdbprojectrg.blob.core.windows.net/igdb-storage-container/');
 
   
 ---> Retrieve the consent URL, navigate to it and accept the permission request:
-DESC INTEGRATION IGDB_AZURE_BLOB;
+DESC INTEGRATION IGDB_AZURE_BLOB ->> 
+    SELECT "property_value" 
+    FROM $1 
+    WHERE "property" = 'AZURE_CONSENT_URL';
 
-/*
-Grant Snowflake Access to the Storage Location via IAM -> role assignments
-*/
+----> Within Azure: grant Snowflake Access to the Storage Location via IAM -> role assignments, using the following id:
+DESC INTEGRATION IGDB_AZURE_BLOB ->> 
+    SELECT SPLIT_PART("property_value",'_', 1) 
+    FROM $1 
+    WHERE "property" = 'AZURE_MULTI_TENANT_APP_NAME';
+    
 
-
+---> Pull allowed integration url (as configured above):
+DESC INTEGRATION IGDB_AZURE_BLOB ->> 
+    SELECT "property_value" 
+    FROM $1 
+    WHERE "property" = 'STORAGE_ALLOWED_LOCATIONS';
+    
 ---> Create external stage
 CREATE STAGE IF NOT EXISTS IGDB.BRONZE.Blob_stage
   STORAGE_INTEGRATION = IGDB_AZURE_BLOB
-  URL = 'azure://storageigdbprojectrg.blob.core.windows.net/igdb-storage-container/'
+  URL = ('azure://storageigdbprojectrg.blob.core.windows.net/igdb-storage-container/')
   FILE_FORMAT = (TYPE = 'parquet');
-
 
 
 

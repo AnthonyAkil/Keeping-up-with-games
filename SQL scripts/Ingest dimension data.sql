@@ -1,7 +1,7 @@
-"""
+/*"""
 This SQL-script is used to ingest the data into the corresponding DIMENSION tables and prepare the data for analysis.
 
-"""
+"""*/
 ---> set Role Context
 USE ROLE ACCOUNTADMIN;
 
@@ -17,41 +17,41 @@ USE DATABASE IGDB;
 -- BRONZE TABLES
 -- #############################################################
 
----> load using COPY INTO to retain reflection of source data):
+---> load using COPY INTO (to retain reflection of source data):
 TRUNCATE TABLE IGDB.BRONZE.GAMEMODE_RAW;
 COPY INTO IGDB.BRONZE.GAMEMODE_RAW
-  FROM @IGDB.BRONZE.S3_stage
+  FROM @IGDB.BRONZE.Blob_stage
   FILE_FORMAT = (TYPE = 'parquet')
   MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
-  FILES = ('game_modes_20251105.parquet');
+  FILES = ('game_modes_20260218.parquet');
 
 TRUNCATE TABLE IGDB.BRONZE.GENRE_RAW;
 COPY INTO IGDB.BRONZE.GENRE_RAW
-  FROM @IGDB.BRONZE.S3_stage
+  FROM @IGDB.BRONZE.Blob_stage
   FILE_FORMAT = (TYPE = 'parquet')
   MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
-  FILES = ('genres_20251105.parquet');
+  FILES = ('genres_20260218.parquet');
 
 TRUNCATE TABLE IGDB.BRONZE.PLATFORM_RAW;
 COPY INTO IGDB.BRONZE.PLATFORM_RAW
-  FROM @IGDB.BRONZE.S3_stage
+  FROM @IGDB.BRONZE.Blob_stage
   FILE_FORMAT = (TYPE = 'parquet')
   MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
-  FILES = ('platforms_20251105.parquet');
+  FILES = ('platforms_20260218.parquet');
 
 TRUNCATE TABLE IGDB.BRONZE.FRANCHISE_RAW;
 COPY INTO IGDB.BRONZE.FRANCHISE_RAW
-  FROM @IGDB.BRONZE.S3_stage
+  FROM @IGDB.BRONZE.Blob_stage
   FILE_FORMAT = (TYPE = 'parquet')
   MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
-  FILES = ('franchises_20251105.parquet');
+  FILES = ('franchises_20260218.parquet');
 
 TRUNCATE TABLE IGDB.BRONZE.GAMETYPE_RAW;
 COPY INTO IGDB.BRONZE.GAMETYPE_RAW
-  FROM @IGDB.BRONZE.S3_stage
+  FROM @IGDB.BRONZE.Blob_stage
   FILE_FORMAT = (TYPE = 'parquet')
   MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
-  FILES = ('game_types_20251108.parquet');
+  FILES = ('game_types_20260218.parquet');
 
 
 
@@ -126,7 +126,7 @@ WHEN NOT MATCHED THEN
     VALUES (source.id, source.name);
     
 
-MERGE INTO IDGB.GOLD.DIM_GAMETYPE AS target
+MERGE INTO IGDB.GOLD.DIM_GAMETYPE AS target
 USING (
     SELECT
       id,
@@ -134,8 +134,9 @@ USING (
     FROM IGDB.BRONZE.GAMETYPE_RAW
 ) AS source
 ON target."Game type ID" = source.id
-WHEN MATCHED THEN 
-    UPDATE target."Game type name" = source.type
+WHEN MATCHED THEN
+    UPDATE SET  
+      target."Game type name" = source.type
 WHEN NOT MATCHED THEN
     INSERT (target."Game type ID", target."Game type name")
     VALUES (source.id, source.type);
