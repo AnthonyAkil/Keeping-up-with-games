@@ -10,10 +10,9 @@ Extracts game data from the IGDB API and prepares files for DWH ingestion.
 import requests
 import configparser
 from math import ceil
+import time
 import polars as pl
 from datetime import datetime
-import time
-
 
 
 
@@ -99,8 +98,8 @@ def create_offset_batches(offset_list: list[int], step_size: int):
         yield offset_list[start_point : start_point + step_size]
 
 def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_names: str):
-    
-    today = datetime.now().strftime('%Y%m%d')
+
+    today = datetime.today().strftime('%Y%m%d')
     filename = f"{endpoint}_{today}.parquet"
     output_path = f"az://{container_name}/{filename}"
 
@@ -122,7 +121,7 @@ def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_name
                 print(f"No data returned for {endpoint}")
                 return None
 
-            # Write to S3
+            # Write to Blob Storage
             df = pl.DataFrame(data)
             df.write_parquet(
                 output_path,
@@ -204,16 +203,13 @@ def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_name
 # ============================================================================
 # Data extraction and load to Azure Blob Container
 # ============================================================================
-    
-endpoints = ["game_modes", "genres", "platforms", "franchises"]
+def main():
+    endpoints = ["games", "game_modes", "game_types", "genres", "platforms", "franchises"]
+    data_fields = ["id, name, first_release_date, game_modes, game_type, genres, platforms, total_rating, total_rating_count, franchises, hypes"] + ["*"] * (len(endpoints) - 1)
 
+    for endpoint, fields in zip(endpoints, data_fields):
+        get_endpoint(url, headers, endpoint, fields)
+        
 
-for endpoint in endpoints:
-    get_endpoint(url, headers, endpoint, "name")        # Pull only the name field for the dimension tables
-    
-
-# HACK: Not DRY - but opting for quick deployment:
-endpoints = ["game_types"]
-
-for endpoint in endpoints:
-    get_endpoint(url, headers, endpoint, "type")        # game_types endpoint field of interest is different than the other endpoints
+if __name__ == "__main__":
+    main()

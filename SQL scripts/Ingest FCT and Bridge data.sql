@@ -24,7 +24,7 @@ COPY INTO IGDB.BRONZE.GAMES_RAW
   FROM @IGDB.BRONZE.Blob_stage
   FILE_FORMAT = (TYPE = 'parquet')
   MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
-  FILES = ('igdb_api_data_20260218');
+  FILES = ('games_20260223.parquet');
 
 
 
