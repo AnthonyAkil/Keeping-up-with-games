@@ -1,7 +1,7 @@
-"""
+/*"""
 This SQL-script is used to ingest the data into the corresponding FACT and BRIDGE tables and prepare the data for analysis.
 
-"""
+"""*/
 ---> set Role Context
 USE ROLE ACCOUNTADMIN;
 
@@ -21,10 +21,10 @@ USE DATABASE IGDB;
 ---> load using COPY INTO to retain reflection of source data):
 TRUNCATE TABLE IGDB.BRONZE.GAMES_RAW;
 COPY INTO IGDB.BRONZE.GAMES_RAW
-  FROM @IGDB.BRONZE.S3_stage
+  FROM @IGDB.BRONZE.Blob_stage
   FILE_FORMAT = (TYPE = 'parquet')
   MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
-  FILES = ('igdb_api_data_20251107.parquet');
+  FILES = ('games_20260223.parquet');
 
 
 
@@ -38,13 +38,13 @@ USING (
     SELECT
       raw_games.id AS game_id,
       unpacked.value::TINYINT AS game_mode_id
-    FROM IGDB.BRONZE.GAMES_RAW AS raw_games
+    FROM IGDB.BRONZE.GAMES_RAW AS raw_games,
     LATERAL FLATTEN(input => raw_games.game_modes) AS unpacked
 ) AS source
 ON target."Game ID" = source.game_id
-  AND target."Game mode ID" AS source.game_mode id
+  AND target."Game mode ID" = source.game_mode_id
 WHEN NOT MATCHED THEN
-  INSERT SET (target."Game ID", target."Game mode ID")
+  INSERT (target."Game ID", target."Game mode ID")
   VALUES (source.game_id, source.game_mode_id);
 
 
@@ -53,13 +53,13 @@ USING (
     SELECT
         raw_games.id AS game_id,
         unpacked.value::TINYINT AS genre_id
-    FROM IGDB.BRONZE.GAMES_RAW AS raw_games
+    FROM IGDB.BRONZE.GAMES_RAW AS raw_games,
     LATERAL FLATTEN(input => raw_games.genres) AS unpacked
 ) AS source
-ON target."Game id" = source.game_id
+ON target."Game ID" = source.game_id
   AND target."Genre ID" = source.genre_id
 WHEN NOT MATCHED THEN
-  INSERT SET (target."Game ID", target."Genre ID")
+  INSERT (target."Game ID", target."Genre ID")
   VALUES (source.game_id, source.genre_id);
 
 
@@ -68,14 +68,14 @@ USING (
     SELECT
         raw_games.id AS game_id,
         unpacked.value::TINYINT AS franchise_id
-    FROM IGDB.BRONZE.GAMES_RAW AS raw_games
+    FROM IGDB.BRONZE.GAMES_RAW AS raw_games,
     LATERAL FLATTEN(input => raw_games.genres) AS unpacked
 ) AS source
-ON target."Game id" = source.game_id
+ON target."Game ID" = source.game_id
   AND target."Franchise ID" = source.franchise_id
 WHEN NOT MATCHED THEN
-  INSERT SET (target."Game ID", target."Franchise ID")
-  VALUES (source.game_id, source.franchise_id)
+  INSERT (target."Game ID", target."Franchise ID")
+  VALUES (source.game_id, source.franchise_id);
 
 
 MERGE INTO IGDB.GOLD.BRIDGE_PLATFORM AS target
@@ -83,14 +83,14 @@ USING (
     SELECT
         raw_games.id AS game_id,
         unpacked.value::TINYINT AS platform_id
-    FROM IGDB.BRONZE.GAMES_RAW AS raw_games
+    FROM IGDB.BRONZE.GAMES_RAW AS raw_games,
     LATERAL FLATTEN(input => raw_games.platforms) AS unpacked
 ) AS source
-ON target."Game id" = source.game_id
+ON target."Game ID" = source.game_id
   AND target."Platform ID" = source.platform_id
 WHEN NOT MATCHED THEN
-  INSERT SET (target."Game ID", target."Platform ID")
-  VALUES (source.game_id, source.platform_id)
+  INSERT (target."Game ID", target."Platform ID")
+  VALUES (source.game_id, source.platform_id);
 
 
 MERGE INTO IGDB.GOLD.BRIDGE_PLATFORM AS target
@@ -98,14 +98,14 @@ USING (
     SELECT
         raw_games.id AS game_id,
         unpacked.value::TINYINT AS platform_id
-    FROM IGDB.BRONZE.GAMES_RAW AS raw_games
+    FROM IGDB.BRONZE.GAMES_RAW AS raw_games,
     LATERAL FLATTEN(input => raw_games.platforms) AS unpacked
 ) AS source
-ON target."Game id" = source.game_id
+ON target."Game ID" = source.game_id
   AND target."Platform ID" = source.platform_id
 WHEN NOT MATCHED THEN
-  INSERT SET (target."Game ID", target."Platform ID")
-  VALUES (source.game_id, source.platform_id)
+  INSERT (target."Game ID", target."Platform ID")
+  VALUES (source.game_id, source.platform_id);
 
 
 MERGE INTO IGDB.GOLD.GAMES AS target
