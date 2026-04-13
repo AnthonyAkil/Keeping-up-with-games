@@ -1,0 +1,5 @@
+USE ROLE SYSADMIN;
+USE WAREHOUSE COMPUTE_WH;
+
+CREATE SCHEMA IF NOT EXISTS IGDB.BRONZE
+  COMMENT = 'Schema for tables where the raw data will land.';

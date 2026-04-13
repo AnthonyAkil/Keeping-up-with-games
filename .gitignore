@@ -1,0 +1,6 @@
+__pycache__/
+.env
+.venv
+app.log
+target/         # dbt
+.airflow        # airflow
