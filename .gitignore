@@ -2,5 +2,13 @@ __pycache__/
 .env
 .venv
 app.log
-target/         # dbt
-.airflow        # airflow
+*.p8
+*.pub
+
+#a airflow:
+.airflow
+
+# dbt:
+target/
+dbt_packages/
+logs/

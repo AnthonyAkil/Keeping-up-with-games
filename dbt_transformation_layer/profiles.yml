@@ -1,0 +1,14 @@
+dbt_transformation_layer:
+  outputs:
+    dev:
+      account: ARWIGJK-UW46260
+      database: IGDB
+      private_key_path: C:\Users\antho\Dropbox\My PC (LAPTOP-9QHIQLTP)\Documents\Portfolio\Keeping
+        up with games\Keeping-up-with-games\rsa_key.p8
+      role: TRANSFORM
+      schema: SILVER
+      threads: 1
+      type: snowflake
+      user: DBT
+      warehouse: COMPUTE_WH
+  target: dev

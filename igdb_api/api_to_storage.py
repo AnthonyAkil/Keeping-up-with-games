@@ -202,7 +202,7 @@ def main():
     # ============================================================================
         
     endpoints = ["games", "game_modes", "game_types", "genres", "platforms", "franchises"]
-    data_fields = ["id, name, first_release_date, game_modes, game_type, genres, platforms, total_rating, total_rating_count, franchises, hypes"] + ["*"] * (len(endpoints) - 1)
+    data_fields = ["id, name, first_release_date, game_modes, game_type, genres, platforms, total_rating, total_rating_count, franchises, hypes, updated_at"] + ["*"] * (len(endpoints) - 1)
 
     for endpoint, fields in zip(endpoints, data_fields):
         get_endpoint(base_url, headers, endpoint, fields, api_rate_limit, container_name, storage_options, multiquery_size_limit, rate_limit_delay, headers)

@@ -6,7 +6,7 @@ CREATE STORAGE INTEGRATION IF NOT EXISTS IGDB_AZURE_BLOB
   STORAGE_PROVIDER = 'AZURE'
   ENABLED = TRUE
   AZURE_TENANT_ID = '15e1619c-3dcc-49be-a66a-e8353d255aec'
-  STORAGE_ALLOWED_LOCATIONS = ('azure://storageigdbprojectrg.blob.core.windows.net/portfolio-igdb-storage-container/');
+  STORAGE_ALLOWED_LOCATIONS = ('azure://portfolioidgbstorage.blob.core.windows.net/portfolio-igdb-storage-container/raw/');
 
 
 ---> Retrieve the consent URL, navigate to it and accept the permission request:
@@ -30,5 +30,5 @@ DESC INTEGRATION IGDB_AZURE_BLOB ->>
 ---> Create external stage
 CREATE STAGE IF NOT EXISTS IGDB.BRONZE.BLOB_PARQUET_STAGE
   STORAGE_INTEGRATION = IGDB_AZURE_BLOB
-  URL = ('azure://storageigdbprojectrg.blob.core.windows.net/portfolio-igdb-storage-container/')
+  URL = ('azure://portfolioidgbstorage.blob.core.windows.net/portfolio-igdb-storage-container/raw/')
   FILE_FORMAT = (TYPE = 'parquet');

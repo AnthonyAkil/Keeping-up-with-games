@@ -5,7 +5,8 @@ USE WAREHOUSE COMPUTE_WH;
 CREATE TABLE IF NOT EXISTS IGDB.BRONZE.RAW_GAMES (
     id SMALLINT PRIMARY KEY,               
     name VARCHAR(255),         
-    first_release_date INT,
+    first_release_date NUMBER(38,0),    -- storing UNIX timestamps
+    updated_at NUMBER(38,0),            -- storing UNIX timestamps
     game_modes ARRAY,          
     game_type TINYINT,        
     genres ARRAY,   

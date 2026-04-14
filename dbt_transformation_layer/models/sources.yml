@@ -1,0 +1,21 @@
+sources:
+  - name: IGDB
+    schema: BRONZE
+    tables:
+      - name: RAW_GAMEMODE
+        identifier: RAW_GAMEMODE
+        
+      - name: RAW_GENRE
+        identifier: RAW_GENRE
+
+      - name: RAW_FRANCHISE
+        identifier: RAW_FRANCHISE
+
+      - name: RAW_GAMETYPE
+        identifier: RAW_GAMETYPE
+
+      - name: RAW_PLATFORM
+        identifier: RAW_PLATFORM
+
+      - name: RAW_GAMES
+        identifier: RAW_GAMES
