@@ -21,3 +21,6 @@ models:
       +materialized: table
       +transient: false
 
+    gold:
+      +schema: "GOLD"
+      +materialized: view
