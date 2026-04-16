@@ -1,0 +1,179 @@
+models:
+  - name: CLEAN_GAMES
+    columns:
+      - name: ID
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      - name: NAME
+        data_tests:
+          - not_null
+
+      - name: AVERAGE_RATING
+        data_tests:
+          - dbt_utils.accepted_range:
+                min_value: 0
+                max_value: 100
+                inclusive: true
+
+      - name: NUM_OF_REVIEWS
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      - name: WISHLIST_COUNT
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+
+  - name: CLEAN_FRANCHISE
+    columns:
+      - name: ID
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      - name: NAME
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: DATE_CREATED_AT
+        data_tests:
+          - not_null
+
+
+  - name: CLEAN_GAMEMODE
+    columns:
+      - name: ID
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      - name: NAME
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: DATE_CREATED_AT
+        data_tests:
+          - not_null
+
+
+  - name: CLEAN_GAMETYPE
+    columns:
+      - name: ID
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      - name: TYPE
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: DATE_CREATED_AT
+        data_tests:
+          - not_null
+
+
+  - name: CLEAN_GENRE
+    columns:
+      - name: ID
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      - name: NAME
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: DATE_CREATED_AT
+        data_tests:
+          - not_null
+
+
+  - name: CLEAN_PLATFORM
+    columns:
+      - name: ID
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+      - name: NAME
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: DATE_CREATED_AT
+        data_tests:
+          - not_null
+
+
+  - name: CLEAN_BRIDGE_FRANCHISE
+    columns:
+      - name: FK_GAME
+        data_tests:
+          - not_null
+
+      - name: FK_FRANCHISE
+        data_tests:
+          - not_null
+
+  
+  - name: CLEAN_BRIDGE_GAMEMODE
+    columns:
+      - name: FK_GAME
+        data_tests:
+          - not_null
+
+      - name: FK_GAME_MODE
+        data_tests:
+          - not_null
+
+
+  - name: CLEAN_BRIDGE_GENRE
+    columns:
+      - name: FK_GAME
+        data_tests:
+          - not_null
+
+      - name: FK_GENRE
+        data_tests:
+          - not_null
+
+
+  - name: CLEAN_BRIDGE_PLATFORM
+    columns:
+      - name: FK_GAME
+        data_tests:
+          - not_null
+
+      - name: FK_PLATFORM
+        data_tests:
+          - not_null
