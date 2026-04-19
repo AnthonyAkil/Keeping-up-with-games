@@ -15,7 +15,8 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 import logging
-
+from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
 
 # ============================================================================
 # Logging setup
@@ -31,8 +32,31 @@ logging.basicConfig(
 # Function setup
 # ============================================================================
 
+
+def get_secret_client(vault_url: str) -> SecretClient:
+    """
+    Creates a single authenticated Key Vault client.
+    Can be reused for each fetch.
+    
+    DefaultAzureCredential automatically uses:
+    - Service Principal locally (reads AZURE_CLIENT_ID, AZURE_TENANT_ID,
+      AZURE_CLIENT_SECRET from local .env)
+    - Managed Identity in production
+    """
+    credential = DefaultAzureCredential()
+    return SecretClient(vault_url=vault_url, credential=credential)
+
+def get_secret(client: SecretClient, secret_name: str) -> str:
+    """
+    Fetches a single secret from Azure Key Vault by name.
+    """
+    return client.get_secret(secret_name).value
+
 def get_item_count(base_url: str, input_headers : dict, endpoint : str) -> int:
     
+    """
+    Gets the item count of a specified endpoint within the IGDB api.
+    """
     response = requests.post(base_url + endpoint + "/count", headers = input_headers)
     response.raise_for_status()
     return response.json()['count']
@@ -46,14 +70,16 @@ def create_offset_batches(offset_list: list[int], step_size: int):
         yield offset_list[start_point : start_point + step_size]
 
 def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_names: str, 
-                 api_rate_limit: int, container_name: str, storage_options: dict,
-                 multiquery_size_limit: int, rate_limit_delay: float, headers: dict):
-
-    today = datetime.today().strftime('%Y%m%d')
-    filename = f"{endpoint}.parquet"
-    output_path = f"az://{container_name}/raw/{today}/{filename}"           # Ensuring every daily extract lands in it's own "folder"
-
+                 api_rate_limit: int, multiquery_size_limit: int, rate_limit_delay: float, 
+                 headers: dict) -> pl.DataFrame:
     
+    """
+    Makes a distinction between the endpoints provided as an input 
+    based on the item count. Either:
+        Calls the endpoint via a regular API call or
+        Calls the endpoint via a 'multiquery' API call (specific to the IGDB API)    
+    """
+  
     item_count = get_item_count(base_url, input_headers = input_headers, endpoint= endpoint)
     
     if item_count <= api_rate_limit:
@@ -65,21 +91,7 @@ def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_name
             response = requests.post(base_url + endpoint, headers=input_headers, params=params)
             response.raise_for_status()
             data = response.json()
-            
-            # Check for empty data
-            if not data:
-                logging.info(f"No data returned for {endpoint}")
-                return None
-
-            # Write to Blob Storage
-            df = pl.DataFrame(data)
-            df.write_parquet(
-                output_path,
-                storage_options=storage_options,
-                compression="zstd",
-                compression_level=3
-            )
-            logging.info(f"{endpoint} uploaded to {output_path}")
+            return data
             
         except requests.exceptions.RequestException as e:
             logging.info(f"API call failed for {endpoint}: {e}")
@@ -131,18 +143,33 @@ def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_name
         
         if dataframes:
             merged_dataframe = pl.concat(dataframes, how = "diagonal")      #HACK: using diagonal to let Polars handle missing columns or mismatch across data types when concat
-
-    
-            merged_dataframe.write_parquet(
-                output_path,
-                storage_options = storage_options,
-                compression = "zstd",
-                compression_level = 3   # zstd:3 -> tradeoff between compression-read for analytical ELT
-            )
-            logging.info(f"{endpoint} uploaded to {output_path}")
+            return merged_dataframe
         else:
             logging.info(f"No data retrieved from the API for endpoint {endpoint}.")
          
+def write_data(data: pl.DataFrame, endpoint: str, container_name: str, storage_options: dict):
+
+    """
+    Writes the endpoint data to the cloud storage location.
+    """
+    
+    today = datetime.today().strftime('%Y%m%d')
+    filename = f"{endpoint}.parquet"
+    output_path = f"az://{container_name}/raw/{today}/{filename}"   # Ensuring every daily extract lands in it's own "folder"
+    
+    df = pl.DataFrame(data)
+    try:
+        df.write_parquet(
+            output_path,
+            storage_options=storage_options,
+            compression="zstd",
+            compression_level=3
+        )
+        logging.info(f"{endpoint} uploaded to {output_path}")
+    except Exception as e:
+        logging.error(f"Failed to write {endpoint} to blob storage: {e}")
+        raise
+        
 
 def main():
     
@@ -150,8 +177,9 @@ def main():
     # Script Configuration
     # ============================================================================
 
-    load_dotenv()
-
+    load_dotenv()       # Does not do anything within the container, but ensures dev and prod remain close
+    client = get_secret_client(os.environ.get("AZURE_VAULT_URL"))
+    
     # API-related:
     api_rate_limit : int        = int(os.environ.get("API_RATE_LIMIT"))
     rate_limit_delay : float    = float(os.environ.get("API_RATE_LIMIT_DELAY"))
@@ -160,8 +188,8 @@ def main():
     auth_url : str      = os.environ.get("AUTH_URL")
     base_url : str      = os.environ.get("BASE_URL")
 
-    api_client_id       = os.environ.get("CLIENT_ID")
-    api_client_secret   = os.environ.get("client_secret")
+    api_client_id       = get_secret(client, "igdb-client-id")
+    api_client_secret   = get_secret(client, "igdb-client-secret")
 
     auth_params = {
         "client_id":        api_client_id,
@@ -170,9 +198,9 @@ def main():
     } 
 
     # Azure-related:
-    storage_account_name    = os.environ.get("ACCOUNT_NAME")
-    container_name          = os.environ.get("CONTAINER_NAME")
-    access_key              = os.environ.get("ACCESS_KEY")
+    storage_account_name    = get_secret(client, "az-stor-account-name")
+    container_name          = get_secret(client, "az-stor-container-name")
+    access_key              = get_secret(client, "az-stor-access-key")
 
     storage_options = {
         "account_name": storage_account_name,
@@ -205,8 +233,8 @@ def main():
     data_fields = ["id, name, first_release_date, game_modes, game_type, genres, platforms, total_rating, total_rating_count, franchises, hypes, updated_at"] + ["*"] * (len(endpoints) - 1)
 
     for endpoint, fields in zip(endpoints, data_fields):
-        get_endpoint(base_url, headers, endpoint, fields, api_rate_limit, container_name, storage_options, multiquery_size_limit, rate_limit_delay, headers)
-        
+        data = get_endpoint(base_url, headers, endpoint, fields, api_rate_limit, multiquery_size_limit, rate_limit_delay, headers)
+        write_data(data, endpoint, container_name, storage_options)
 
 if __name__ == "__main__":
     main()

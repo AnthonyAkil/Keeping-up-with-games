@@ -1,0 +1,14 @@
+# Required for authentication and fetching secrets securely:
+AZURE_TENANT_ID = "<tenant id>"
+AZURE_CLIENT_ID = "<client/app id>"
+AZURE_CLIENT_SECRET = "<client secret>"
+AZURE_VAULT_NAME = "<key vault name>"
+AZURE_VAULT_URL = "https://<key vault name>.vault.azure.net/"
+
+
+## IGDB API configurations that are non-sensitive:
+API_RATE_LIMIT            = 500
+API_RATE_LIMIT_DELAY      = 0.25         # 1 request / 0.25s
+MULTIQUERY_SIZE_LIMIT     = 10
+AUTH_URL                  = https://id.twitch.tv/oauth2/token
+BASE_URL                  = https://api.igdb.com/v4/

@@ -3,6 +3,8 @@
 # the same base config via YAML anchors (&) and aliases (<<: *)
 x-airflow-common: &airflow-common
   image: airflow-dbt:latest
+  env_file:
+    - ../.env
   environment:
     # Tells Airflow where to store metadata (tasks, DAG runs, logs)
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -10,20 +12,19 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__FERNET_KEY: ''
-
     # Default UI user (used in init)
     _AIRFLOW_WWW_USER_USERNAME: admin
     _AIRFLOW_WWW_USER_PASSWORD: admin
-
   volumes:
     # Mount folders into the container:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
     - ./config:/opt/airflow/config
-    # Mounts dbt project into the container so Airflow
-    # can trigger dbt commands
+    # Mount dbt project to trigger dbt commands
     - ../dbt_transformation_layer:/opt/airflow/dbt
+    # Mount Python scripts
+    - ../api_extract_data:/opt/airflow/api_extract_data
   depends_on:
     postgres:
       condition: service_healthy

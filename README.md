@@ -33,26 +33,9 @@ proficiency, maximising both delivery speed and output quality.
 
 
 
-### Setup
+## Getting started
 
-#### Cloud Storage:
-
-This project used Azure Blob Storage to store the data and the following steps give a high-over on how to set this up. The same steps would apply for GCS and S3 (GCP and AWS, respectively), but please refer to the Snowflake documentation for more details.
-
-* First, assuming already have an Azure account and a resource group, create a Storage Account under said resource group.
-
-* Afterwards, create a Storage Container within this Storage Account.
-
-* Find the Tenant ID, within Azure AD
-
-* Fill in your Tenant ID and Container name in the code within `sql/stages/create_external_stage.sql` to create a storage integration.
-
-* Follow the remaining steps within the `sql/stages/create_external_stage.sql` file to provide Snwoflake with the required access to the Storage Account.
-
-* When this is enabled, we finally can create the external stage
-
-
-#### dbt:
+### dbt setup:
 
 To create a Snowflake system user that dbt can utilize to authenticate and execute the transformations, we first need to use a key-pair authentication. I recommend using *openssl* for this, which is already included in Git Bash, or you can install it using PowerShell as follows:
 
@@ -89,6 +72,59 @@ dbt debug
 ```
 
 **Note:** the `profiles.yml` will be generated outside of the current wkdir and for the sake of file transparency I have moved that within the dbt project folder.
+
+
+### Cloud setup:
+
+Within this project, Azure services were leveraged to built a production-like pipeline. Specifically, Azure Blob Storage and Key-vault were used to securely handle secrets and data storage. 
+
+The following section provides a high-over description of the steps required to set-up the specific details within the configuration in order to run the pipeline. It will not be a guide on how to work with these particular services and therefore already assumes a basic level of understanding, such as how to create secrets and a Blob container.
+
+#### Key-vault and handling sensitive information:
+
+After creating a Key-vault and adding the required secrets, we can take the following components (subscription id, resource-group name and key-valt name) and create a service principal (think of this like a technical user identity). 
+
+The output of the following code provides us with the tenant id, client id and secret.
+
+```powershell
+az ad sp create-for-rbac --name "airflow-local-dev" --role "Key Vault Secrets User" --scopes /subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.KeyVault/vaults/<vault-name>
+```
+Place the components in the `example_env.txt` file so that the Python script can authenticate and fetch the secrets. Rename the file to `.env`.
+
+Afterwards, create the necessary secrets using the following code:
+
+```powershell
+az keyvault secret set --vault-name <vault-name> --name "<secret-name>" --value "secret value"
+```
+
+If facing trouble creating secrets this way, you might need to add the role *Key Vault Secrets Officer* to the account you are accessing the CLI with to create secrets.
+
+
+By setting this up, we not only handle sensitive information securely from the start of development, but it also closely mimics the production setting with no code changes necessary.
+
+#### Cloud Storage:
+
+This project used Azure Blob Storage to store the data and the following steps give a high-over on how to set this up. The same steps would apply for GCS and S3 (GCP and AWS, respectively), but please refer to the Snowflake documentation for more details.
+
+* Create a Storage Account under said resource group.
+
+* Afterwards, create a Storage Container within this Storage Account.
+
+* Find the Tenant ID, within Azure AD
+
+* Fill in your Tenant ID and Container name in the code within `sql/stages/create_external_stage.sql` to create a storage integration.
+
+
+
+### Snowflake setup:
+
+* Follow the remaining steps within the `sql/stages/create_external_stage.sql` file to provide Snwoflake with the required access to the Storage Account. This creates the external stage.
+
+* For one-time object creations execute the sql files in the `sql/database`, `sql/schemas`, `sql/tables` and `sql/users` folders, in that order. 
+
+
+### Docker setup:
+Assuming basic understanding and 
 
 
 
