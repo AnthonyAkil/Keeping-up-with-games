@@ -5,13 +5,18 @@ x-airflow-common: &airflow-common
   image: airflow-dbt:latest
   env_file:
     - ../.env
-  environment:
+  environment: &airflow-common-env
     # Tells Airflow where to store metadata (tasks, DAG runs, logs)
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    # Tells task workers where to reach the execution API
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'
     # Single-node setup:
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__FERNET_KEY: ''
+    # JWT required for secure communication between scheduler and API server
+    AIRFLOW__API_AUTH__JWT_SECRET: 'airflow_jwt_secret'
+    AIRFLOW__API_AUTH__JWT_ISSUER: 'airflow'
     # Default UI user (used in init)
     _AIRFLOW_WWW_USER_USERNAME: admin
     _AIRFLOW_WWW_USER_PASSWORD: admin
@@ -57,7 +62,10 @@ services:
         --email admin@example.com \
       || true
       "
-      
+    environment:
+      <<: *airflow-common-env
+      _AIRFLOW_DB_MIGRATE: 'true'
+    
   airflow-apiserver:
     <<: *airflow-common
     command: api-server
@@ -77,6 +85,24 @@ services:
   airflow-scheduler:
     <<: *airflow-common
     command: scheduler
+    # Why: scheduler health check ensures it's actively processing DAGs
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+      airflow-apiserver:
+        condition: service_healthy
+
+  airflow-dag-processor:
+    <<: *airflow-common
+    command: dag-processor
+    restart: always
     depends_on:
       airflow-init:
         condition: service_completed_successfully
