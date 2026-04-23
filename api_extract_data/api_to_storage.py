@@ -13,10 +13,8 @@ import time
 import polars as pl
 import os
 from dotenv import load_dotenv
-from datetime import datetime
 import logging
-from azure.keyvault.secrets import SecretClient
-from azure.identity import DefaultAzureCredential
+from api_extract_data.get_keyvault_secrets import get_secret_client, get_secret
 
 # ============================================================================
 # Logging setup
@@ -32,25 +30,6 @@ logging.basicConfig(
 # Function setup
 # ============================================================================
 
-
-def get_secret_client(vault_url: str) -> SecretClient:
-    """
-    Creates a single authenticated Key Vault client.
-    Can be reused for each fetch.
-    
-    DefaultAzureCredential automatically uses:
-    - Service Principal locally (reads AZURE_CLIENT_ID, AZURE_TENANT_ID,
-      AZURE_CLIENT_SECRET from local .env)
-    - Managed Identity in production
-    """
-    credential = DefaultAzureCredential()
-    return SecretClient(vault_url=vault_url, credential=credential)
-
-def get_secret(client: SecretClient, secret_name: str) -> str:
-    """
-    Fetches a single secret from Azure Key Vault by name.
-    """
-    return client.get_secret(secret_name).value
 
 def get_item_count(base_url: str, input_headers : dict, endpoint : str) -> int:
     
@@ -147,15 +126,14 @@ def get_endpoint(base_url: str, input_headers : dict, endpoint : str, field_name
         else:
             logging.info(f"No data retrieved from the API for endpoint {endpoint}.")
          
-def write_data(data: pl.DataFrame, endpoint: str, container_name: str, storage_options: dict):
+def write_data(data: pl.DataFrame, endpoint: str, container_name: str, storage_options: dict, run_date: int):
 
     """
     Writes the endpoint data to the cloud storage location.
     """
     
-    today = datetime.today().strftime('%Y%m%d')
     filename = f"{endpoint}.parquet"
-    output_path = f"az://{container_name}/raw/{today}/{filename}"   # Ensuring every daily extract lands in it's own "folder"
+    output_path = f"az://{container_name}/raw/{run_date}/{filename}"   # Ensuring every daily extract lands in it's own "folder"
     
     df = pl.DataFrame(data)
     try:
@@ -171,7 +149,7 @@ def write_data(data: pl.DataFrame, endpoint: str, container_name: str, storage_o
         raise
         
 
-def main():
+def main(run_date: int):
     
     # ============================================================================
     # Script Configuration
@@ -234,7 +212,7 @@ def main():
 
     for endpoint, fields in zip(endpoints, data_fields):
         data = get_endpoint(base_url, headers, endpoint, fields, api_rate_limit, multiquery_size_limit, rate_limit_delay, headers)
-        write_data(data, endpoint, container_name, storage_options)
+        write_data(data, endpoint, container_name, storage_options, run_date)
 
 if __name__ == "__main__":
     main()
