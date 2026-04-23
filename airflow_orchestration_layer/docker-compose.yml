@@ -2,7 +2,8 @@
 # All airflow services (scheduler, webserver, worker) share
 # the same base config via YAML anchors (&) and aliases (<<: *)
 x-airflow-common: &airflow-common
-  image: airflow-dbt:latest
+  # image: airflow-dbt:latest
+  build: .
   env_file:
     - ../.env
   environment: &airflow-common-env
