@@ -26,8 +26,6 @@ def igdb_pipeline():
     @task(retries=2, retry_delay=300)
     def run_igdb_pipeline(run_date: int):
         
-        import sys
-        sys.path.append("/opt/airflow")
         
         
         try:
@@ -46,8 +44,6 @@ def igdb_pipeline():
         import os
         from dotenv import load_dotenv
         import snowflake.connector
-        import sys
-        sys.path.append("/opt/airflow")
         
         load_dotenv()
 

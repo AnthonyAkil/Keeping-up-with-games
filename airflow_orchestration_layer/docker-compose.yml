@@ -18,6 +18,8 @@ x-airflow-common: &airflow-common
     # JWT required for secure communication between scheduler and API server
     AIRFLOW__API_AUTH__JWT_SECRET: 'airflow_jwt_secret'
     AIRFLOW__API_AUTH__JWT_ISSUER: 'airflow'
+    # Ensures Python can find the scripts for imports
+    PYTHONPATH: /opt/airflow
     # Default UI user (used in init)
     _AIRFLOW_WWW_USER_USERNAME: admin
     _AIRFLOW_WWW_USER_PASSWORD: admin
