@@ -158,7 +158,11 @@ docker compose up
 
 After the containers are succesfully running, the Airflow UI can be accessed via `localhost:8080` in the browser. Note that the username and password are provided when docker spins up the containers.
 
+* GCHR login using Github PAT to pull dbt image
 
+```powershell
+docker login ghcr.io
+```
 
 
 ### What went wrong and learnings
@@ -169,3 +173,7 @@ I really like incrementally loading my fact tables and wanted to implement this 
 Since the *incremental_strategy='append'* could very easily append duplicate records with the current setup and although *incremental_strategy='merge'* resolves this issue, it would have to make a full source/destination table scan with minor to no upside to show for it.
 
 Instead of optimizing too early by sacrificing transformation efficiency for a *'scalable'* load method, I made the concious choice of staying flexible in how we want to handle reducing transformation time in the future. The benefic is that the transformation time is **reduced to a third** of the incremental strategy.
+
+### To include in future iterations:
+
+* dbt: package-lock.yml file caused issues when building the dbt image 

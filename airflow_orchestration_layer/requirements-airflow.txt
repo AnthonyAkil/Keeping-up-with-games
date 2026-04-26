@@ -1,6 +1,6 @@
-dbt-snowflake==1.11.4
-astronomer-cosmos
-snowflake-connector-python==4.4.0
+dbt-snowflake
+apache-airflow-providers-docker
+snowflake-connector-python
 psycopg2-binary
 asyncpg
 requests

@@ -1,4 +1,4 @@
-# Required for authentication and fetching secrets securely:
+## Required for authentication and fetching secrets securely:
 AZURE_TENANT_ID = "<tenant id>"
 AZURE_CLIENT_ID = "<client/app id>"
 AZURE_CLIENT_SECRET = "<client secret>"
@@ -12,3 +12,6 @@ API_RATE_LIMIT_DELAY      = 0.25         # 1 request / 0.25s
 MULTIQUERY_SIZE_LIMIT     = 10
 AUTH_URL                  = https://id.twitch.tv/oauth2/token
 BASE_URL                  = https://api.igdb.com/v4/
+
+## Absolute path to private key for dbt role:
+DBT_PRIVATE_KEY_PATH    = C:\Path\to\projectfolder\rsa_key.p8

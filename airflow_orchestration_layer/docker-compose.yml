@@ -1,9 +1,7 @@
-# Avoids repeating the same config across multiple services.
-# All airflow services (scheduler, webserver, worker) share
-# the same base config via YAML anchors (&) and aliases (<<: *)
 x-airflow-common: &airflow-common
-  # image: airflow-dbt:latest
-  build: .
+  build:
+    context: .
+    dockerfile: Dockerfile
   env_file:
     - ../.env
   environment: &airflow-common-env
@@ -19,20 +17,28 @@ x-airflow-common: &airflow-common
     AIRFLOW__API_AUTH__JWT_SECRET: 'airflow_jwt_secret'
     AIRFLOW__API_AUTH__JWT_ISSUER: 'airflow'
     # Ensures Python can find the scripts for imports
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
     PYTHONPATH: /opt/airflow
     # Default UI user (used in init)
     _AIRFLOW_WWW_USER_USERNAME: admin
     _AIRFLOW_WWW_USER_PASSWORD: admin
+    # Tells DockerOperator where the Docker daemon is
+    DOCKER_HOST: unix:///var/run/docker.sock
+    # To avoid DB connection exhaustion and worker overload
+    AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_SIZE: 10
+    AIRFLOW__DATABASE__SQL_ALCHEMY_MAX_OVERFLOW: 20
+    AIRFLOW__DATABASE__SQL_ALCHEMY_POOL_TIMEOUT: 60
+    AIRFLOW__CORE__PARALLELISM: 4
+    AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: 2
   volumes:
-    # Mount folders into the container:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
     - ./config:/opt/airflow/config
-    # Mount dbt project to trigger dbt commands
-    - ../dbt_transformation_layer:/opt/airflow/dbt
-    # Mount Python scripts
+    - ./scripts:/opt/airflow/scripts
     - ../api_extract_data:/opt/airflow/api_extract_data
+    # DockerOperator needs access to Docker daemon to spawn containers
+    - /var/run/docker.sock:/var/run/docker.sock
   depends_on:
     postgres:
       condition: service_healthy
@@ -47,28 +53,35 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "airflow" ]
+      test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s
       retries: 5
+      start_period: 5s
+    restart: always
+
+  # Dedicated dbt container — isolated deps, private key, snowflake auth
+  dbt:
+    build:
+      context: ../dbt_transformation_layer
+      dockerfile: Dockerfile
+    image: dbt-snowflake:latest # tag that the dag will reference
+    env_file:
+    - ../.env
 
   airflow-init:
     <<: *airflow-common
     entrypoint: /bin/bash
     command: -c "
-      airflow db migrate &&
-      airflow users create \
-        --username $${_AIRFLOW_WWW_USER_USERNAME} \
-        --password $${_AIRFLOW_WWW_USER_PASSWORD} \
-        --firstname Admin \
-        --lastname User \
-        --role Admin \
-        --email admin@example.com \
-      || true
+      airflow db migrate
       "
     environment:
       <<: *airflow-common-env
       _AIRFLOW_DB_MIGRATE: 'true'
-    
+      _AIRFLOW_WWW_USER_CREATE: 'true'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   airflow-apiserver:
     <<: *airflow-common
     command: api-server
@@ -78,7 +91,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     healthcheck:
-      test: [ "CMD", "curl", "--fail", "http://localhost:8080/api/v2/version" ]
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/api/v2/version"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -88,7 +101,6 @@ services:
   airflow-scheduler:
     <<: *airflow-common
     command: scheduler
-    # Why: scheduler health check ensures it's actively processing DAGs
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
       interval: 30s

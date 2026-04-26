@@ -1,4 +1,5 @@
 from airflow.sdk import dag, task, get_current_context
+from airflow.providers.standard.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import datetime
 import logging
 
@@ -88,10 +89,17 @@ def igdb_pipeline():
     def get_run_date():
         context = get_current_context()
         return context["ds_nodash"]
+    
+    trigger_dbt = TriggerDagRunOperator(
+        task_id="trigger_dbt_transformations",
+        trigger_dag_id="dbt_transformations",
+        wait_for_completion=True,
+        reset_dag_run=True,
+    )
 
     run_date = get_run_date()
 
-    run_igdb_pipeline(run_date) >> copy_into_snowflake(run_date)
+    run_igdb_pipeline(run_date) >> copy_into_snowflake(run_date) >> trigger_dbt
 
 
 igdb_pipeline()

@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# dbt artifacts
+target/
+dbt_packages/
+logs/
+packages-lock.yml
+
+# Local dev
+.env
+*.log
+
+# Git
+.git
+.gitignore
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Docker
+Dockerfile
+docker-compose.yml

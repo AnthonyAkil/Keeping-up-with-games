@@ -1,0 +1,3 @@
+azure-keyvault-secrets 
+azure-identity 
+python-dotenv

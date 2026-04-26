@@ -16,11 +16,9 @@ clean-targets:
 
 models:
   dbt_transformation_layer:
-
     silver:
       +materialized: table
       +transient: false
-
     gold:
       +schema: "GOLD"
       +materialized: view
