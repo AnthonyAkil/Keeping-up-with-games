@@ -1,0 +1,90 @@
+table FCT_GAMES
+	lineageTag: 42d80038-89a3-4ce8-93ba-7762eb8269d6
+
+	column 'Game ID'
+		dataType: double
+		lineageTag: dfd71ae5-36a2-4c79-9c3d-fea2efdd5919
+		summarizeBy: none
+		sourceColumn: Game ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Game name'
+		dataType: string
+		lineageTag: fd569100-fcaa-435a-8739-330259e4259b
+		summarizeBy: none
+		sourceColumn: Game name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Game type ID'
+		dataType: double
+		lineageTag: 7812d968-0396-4272-9baf-facf4dbbedee
+		summarizeBy: none
+		sourceColumn: Game type ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Average rating'
+		dataType: double
+		lineageTag: ec103cf7-186a-4ca8-a280-221e522b7722
+		summarizeBy: sum
+		sourceColumn: Average rating
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Number of reviews'
+		dataType: double
+		lineageTag: 7c99596c-99ab-4b1c-bf64-15e7a377ffcf
+		summarizeBy: sum
+		sourceColumn: Number of reviews
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Wishlist count'
+		dataType: double
+		lineageTag: a0f458e7-2cc2-49b2-afec-42fd82be4ffb
+		summarizeBy: sum
+		sourceColumn: Wishlist count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Date game initial release'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 7bde4a5e-913e-4f52-9ed9-88667bd78a26
+		summarizeBy: none
+		sourceColumn: Date game initial release
+
+		variation Variation
+			isDefault
+			relationship: 8e468874-1418-4aca-afa5-139fc38b7f52
+			defaultHierarchy: LocalDateTable_8b530313-4429-4e10-a9a0-130cdceca1a8.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition FCT_GAMES = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    FCT_GAMES_View = GOLD_Schema{[Name="FCT_GAMES",Kind="View"]}[Data]
+				in
+				    FCT_GAMES_View
+
+	annotation PBI_ResultType = Table
+

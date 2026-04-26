@@ -1,0 +1,36 @@
+table DIM_BRIDGE_PLATFORM
+	lineageTag: a552e318-eb2e-4216-8af9-c7aa53f91f48
+
+	column 'Game ID'
+		dataType: double
+		lineageTag: 722c312c-f9dd-436b-a681-6e3f513ce5ac
+		summarizeBy: none
+		sourceColumn: Game ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Platform ID'
+		dataType: double
+		lineageTag: a29a691d-d086-4279-9439-81b37153c3ca
+		summarizeBy: none
+		sourceColumn: Platform ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition DIM_BRIDGE_PLATFORM = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    DIM_BRIDGE_PLATFORM_View = GOLD_Schema{[Name="DIM_BRIDGE_PLATFORM",Kind="View"]}[Data]
+				in
+				    DIM_BRIDGE_PLATFORM_View
+
+	annotation PBI_ResultType = Table
+

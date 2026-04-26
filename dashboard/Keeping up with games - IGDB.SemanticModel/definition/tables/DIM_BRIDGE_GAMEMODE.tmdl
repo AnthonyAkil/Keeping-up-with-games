@@ -1,0 +1,36 @@
+table DIM_BRIDGE_GAMEMODE
+	lineageTag: 2092320b-7b5c-44df-a6b2-4c5b916e5bfe
+
+	column 'Game ID'
+		dataType: double
+		lineageTag: 51a22986-0d6b-448c-8a2f-d06ec4a9b2cd
+		summarizeBy: none
+		sourceColumn: Game ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Game mode ID'
+		dataType: double
+		lineageTag: 1701be23-68c8-4e6d-91c7-be62bdb7867c
+		summarizeBy: none
+		sourceColumn: Game mode ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition DIM_BRIDGE_GAMEMODE = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    DIM_BRIDGE_GAMEMODE_View = GOLD_Schema{[Name="DIM_BRIDGE_GAMEMODE",Kind="View"]}[Data]
+				in
+				    DIM_BRIDGE_GAMEMODE_View
+
+	annotation PBI_ResultType = Table
+

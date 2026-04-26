@@ -1,0 +1,50 @@
+table DIM_PLATFORM
+	lineageTag: aac74631-70a6-4aef-9692-e0af642ef7e4
+
+	column 'Platform ID'
+		dataType: double
+		lineageTag: 8463a235-49c3-461f-8a9e-ba1d4bf2c224
+		summarizeBy: none
+		sourceColumn: Platform ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Platform name'
+		dataType: string
+		lineageTag: 1f088396-1c9b-47d2-b63e-98891684eb72
+		summarizeBy: none
+		sourceColumn: Platform name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date platform created'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2b49d9f4-92db-46a1-bf0e-ba48ca100dd9
+		summarizeBy: none
+		sourceColumn: Date platform created
+
+		variation Variation
+			isDefault
+			relationship: a81a0480-5ccf-41df-9598-86050c719458
+			defaultHierarchy: LocalDateTable_407a8f15-b710-44b7-9fe5-3ee1423e95e4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition DIM_PLATFORM = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    DIM_PLATFORM_View = GOLD_Schema{[Name="DIM_PLATFORM",Kind="View"]}[Data]
+				in
+				    DIM_PLATFORM_View
+
+	annotation PBI_ResultType = Table
+

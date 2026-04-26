@@ -1,0 +1,152 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 725.89333239440145,
+            "y": 652.79558535824583
+          },
+          "nodeIndex": "DIM_BRIDGE_FRANCHISE",
+          "nodeLineageTag": "4e2710ef-a783-4dce-b9b0-c24b142926da",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 279.53494824113295,
+            "y": 155.97643510881881
+          },
+          "nodeIndex": "DIM_BRIDGE_GAMEMODE",
+          "nodeLineageTag": "2092320b-7b5c-44df-a6b2-4c5b916e5bfe",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 296.27219028138245,
+            "y": 652.72281613488212
+          },
+          "nodeIndex": "DIM_BRIDGE_GENRE",
+          "nodeLineageTag": "80c77dc4-cab4-488d-a04b-3e8bd9ab6dd7",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 859.05549599219876,
+            "y": 292.11234372491322
+          },
+          "nodeIndex": "DIM_BRIDGE_PLATFORM",
+          "nodeLineageTag": "a552e318-eb2e-4216-8af9-c7aa53f91f48",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 357.89333722795709,
+            "y": 882.99543392183614
+          },
+          "nodeIndex": "DIM_FRANCHISE",
+          "nodeLineageTag": "a9357743-5622-4cf9-9b51-feb9f384b24f",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": -50
+          },
+          "nodeIndex": "DIM_GAMEMODE",
+          "nodeLineageTag": "e8d7f097-2c70-4175-917f-50dc735040fd",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 569.09613441810268,
+            "y": 142.82330608417215
+          },
+          "nodeIndex": "DIM_GAMETYPE",
+          "nodeLineageTag": "336930e3-708e-4bf1-92e6-19644312661c",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 67.448501024793927,
+            "y": 834.70610265581263
+          },
+          "nodeIndex": "DIM_GENRE",
+          "nodeLineageTag": "48996bda-1b03-4953-b5f5-87566bc0d389",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1145.8848206212481,
+            "y": 151.61945453453995
+          },
+          "nodeIndex": "DIM_PLATFORM",
+          "nodeLineageTag": "aac74631-70a6-4aef-9692-e0af642ef7e4",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 569.04844750122356,
+            "y": 349.7400351702845
+          },
+          "nodeIndex": "FCT_GAMES",
+          "nodeLineageTag": "42d80038-89a3-4ce8-93ba-7762eb8269d6",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 40.0525547248832,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

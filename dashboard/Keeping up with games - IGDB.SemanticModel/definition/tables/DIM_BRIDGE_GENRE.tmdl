@@ -1,0 +1,36 @@
+table DIM_BRIDGE_GENRE
+	lineageTag: 80c77dc4-cab4-488d-a04b-3e8bd9ab6dd7
+
+	column 'Game ID'
+		dataType: double
+		lineageTag: cf397227-b28d-4bc5-befb-4873dbba91f5
+		summarizeBy: none
+		sourceColumn: Game ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Genre ID'
+		dataType: double
+		lineageTag: bbea5637-c9b1-4bf9-a8a3-a2b710c4653c
+		summarizeBy: none
+		sourceColumn: Genre ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition DIM_BRIDGE_GENRE = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    DIM_BRIDGE_GENRE_View = GOLD_Schema{[Name="DIM_BRIDGE_GENRE",Kind="View"]}[Data]
+				in
+				    DIM_BRIDGE_GENRE_View
+
+	annotation PBI_ResultType = Table
+

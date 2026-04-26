@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Keeping up with games - IGDB"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "eb1a29e6-192b-4c71-b4ea-7a1699311c97"
+  }
+}

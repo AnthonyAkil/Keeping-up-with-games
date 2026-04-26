@@ -1,0 +1,50 @@
+table DIM_GAMEMODE
+	lineageTag: e8d7f097-2c70-4175-917f-50dc735040fd
+
+	column 'Game mode ID'
+		dataType: double
+		lineageTag: bd073ed9-6224-433c-891f-e050ca051284
+		summarizeBy: none
+		sourceColumn: Game mode ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Game mode name'
+		dataType: string
+		lineageTag: 987ea0e3-6432-45dd-a7d6-99f1f1d6a4b7
+		summarizeBy: none
+		sourceColumn: Game mode name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date game mode created'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 13a75d80-6e7c-4420-8336-03fa49221f19
+		summarizeBy: none
+		sourceColumn: Date game mode created
+
+		variation Variation
+			isDefault
+			relationship: 7f7ff166-a434-4cce-a9f2-2d96a66cbafe
+			defaultHierarchy: LocalDateTable_ff4cc0d3-f0ba-4511-a7fb-55dfa8cf39b6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition DIM_GAMEMODE = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    DIM_GAMEMODE_View = GOLD_Schema{[Name="DIM_GAMEMODE",Kind="View"]}[Data]
+				in
+				    DIM_GAMEMODE_View
+
+	annotation PBI_ResultType = Table
+

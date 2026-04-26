@@ -1,0 +1,50 @@
+table DIM_FRANCHISE
+	lineageTag: a9357743-5622-4cf9-9b51-feb9f384b24f
+
+	column 'Franchise ID'
+		dataType: double
+		lineageTag: 61615856-aad0-4cda-8fd1-e09ca12a51f2
+		summarizeBy: none
+		sourceColumn: Franchise ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Franchise name'
+		dataType: string
+		lineageTag: 9776ceb2-10a5-4a47-809c-3882742b08ab
+		summarizeBy: none
+		sourceColumn: Franchise name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date franchise created'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 400b89c2-10d3-4aed-94a6-7381f552dabd
+		summarizeBy: none
+		sourceColumn: Date franchise created
+
+		variation Variation
+			isDefault
+			relationship: cbcdebde-a87e-4eec-91cc-0ab17e408ed0
+			defaultHierarchy: LocalDateTable_75c9fcca-4dc4-4d04-8a12-5f36ae17e4d8.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition DIM_FRANCHISE = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    DIM_FRANCHISE_View = GOLD_Schema{[Name="DIM_FRANCHISE",Kind="View"]}[Data]
+				in
+				    DIM_FRANCHISE_View
+
+	annotation PBI_ResultType = Table
+

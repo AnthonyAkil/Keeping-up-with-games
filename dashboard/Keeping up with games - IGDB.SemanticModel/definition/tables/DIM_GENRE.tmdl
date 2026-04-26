@@ -1,0 +1,50 @@
+table DIM_GENRE
+	lineageTag: 48996bda-1b03-4953-b5f5-87566bc0d389
+
+	column 'Genre ID'
+		dataType: double
+		lineageTag: c90ffe11-cb0b-4303-88c1-aebf085dbe21
+		summarizeBy: none
+		sourceColumn: Genre ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Genre name'
+		dataType: string
+		lineageTag: 95ebe84e-8863-41d5-af77-349b785c4afe
+		summarizeBy: none
+		sourceColumn: Genre name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date genre created'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d912f715-9d31-4e51-b144-87820d1b521c
+		summarizeBy: none
+		sourceColumn: Date genre created
+
+		variation Variation
+			isDefault
+			relationship: e1a47dab-c3de-4ee0-83b0-cc28eadc3d8e
+			defaultHierarchy: LocalDateTable_09d0efa4-6384-410f-8025-0e1db0f167c4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition DIM_GENRE = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    DIM_GENRE_View = GOLD_Schema{[Name="DIM_GENRE",Kind="View"]}[Data]
+				in
+				    DIM_GENRE_View
+
+	annotation PBI_ResultType = Table
+

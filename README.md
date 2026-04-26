@@ -111,7 +111,7 @@ The following section provides a high-over description of the steps required to 
 To create a Snowflake system user that dbt can utilize to authenticate and execute the transformations, we first need to use a key-pair authentication. I recommend using *openssl* for this, which is already included in Git Bash, or you can install it using PowerShell as follows:
 
 ```powershell
-winget install -e --id ShiningLight.OpenSS
+winget install -e --id ShiningLight.OpenSSL
 ```
 
 * First, generate a private, unencrypted key:
