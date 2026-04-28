@@ -5,13 +5,17 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+#HACK: Defining the mapping dictionary within the dag is not ideal and should be uplifted in the future
 ENDPOINT_TABLE_MAP = {
-    "games":      "RAW_GAMES",
-    "game_modes": "RAW_GAMEMODE",
-    "game_types": "RAW_GAMETYPE",
-    "genres":     "RAW_GENRE",
-    "platforms":  "RAW_PLATFORM",
-    "franchises": "RAW_FRANCHISE",
+    "games":                 "RAW_GAMES",
+    "game_modes":            "RAW_GAMEMODE",
+    "game_types":            "RAW_GAMETYPE",
+    "genres":                "RAW_GENRE",
+    "platforms":             "RAW_PLATFORM",
+    "franchises":            "RAW_FRANCHISE",
+    "game_statuses":         "RAW_GAMESTATUS",
+    "popularity_types":      "RAW_POPTYPE",
+    "popularity_primitives": "RAW_POPPRIMITIVE"
 }
 
 @dag(

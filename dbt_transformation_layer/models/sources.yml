@@ -19,3 +19,12 @@ sources:
 
       - name: RAW_GAMES
         identifier: RAW_GAMES
+      
+      - name: RAW_POPTYPE
+        identifier: RAW_POPTYPE
+      
+      - name: RAW_POPPRIMITIVE
+        identifier: RAW_POPPRIMITIVE
+      
+      - name: RAW_GAMESTATUS
+        identifier: RAW_GAMESTATUS

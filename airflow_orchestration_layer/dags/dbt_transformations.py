@@ -22,6 +22,14 @@ def dbt_transformations():
     az_client_secret= os.environ.get("AZURE_CLIENT_SECRET")
     az_vault_url = os.environ.get("AZURE_VAULT_URL")
     
+    common_env = {
+        "AZURE_TENANT_ID":     az_tenant_id,
+        "AZURE_CLIENT_ID":     az_client_id,
+        "AZURE_CLIENT_SECRET": az_client_secret,
+        "AZURE_VAULT_URL":     az_vault_url,
+        "DBT_PRIVATE_KEY_PATH": "/tmp/rsa_key.p8",
+    }
+    
 
     # Why DockerOperator: spawns the dbt container per command
     dbt_run = DockerOperator(
@@ -32,13 +40,7 @@ def dbt_transformations():
         network_mode="bridge",
         auto_remove="success",
         mount_tmp_dir=False,
-        environment={
-            "AZURE_TENANT_ID":     az_tenant_id,
-            "AZURE_CLIENT_ID":     az_client_id,
-            "AZURE_CLIENT_SECRET": az_client_secret,
-            "AZURE_VAULT_URL":     az_vault_url,
-            "DBT_PRIVATE_KEY_PATH": "/tmp/rsa_key.p8",
-        },
+        environment= common_env
     )
 
     dbt_test = DockerOperator(
@@ -49,13 +51,7 @@ def dbt_transformations():
         network_mode="bridge",
         auto_remove="success",
         mount_tmp_dir=False,
-        environment={
-            "AZURE_TENANT_ID":     az_tenant_id,
-            "AZURE_CLIENT_ID":     az_client_id,
-            "AZURE_CLIENT_SECRET": az_client_secret,
-            "AZURE_VAULT_URL":     az_vault_url,
-            "DBT_PRIVATE_KEY_PATH": "/tmp/rsa_key.p8",
-        },
+        environment=common_env
     )
 
     dbt_run >> dbt_test

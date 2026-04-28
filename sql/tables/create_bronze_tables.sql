@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS IGDB.BRONZE.RAW_GAMES (
     total_rating NUMBER(5,2),        
     total_rating_count INT,                  
     franchises ARRAY,
+    status SMALLINT,
     hypes SMALLINT )
 COMMENT = 'Table to be loaded from Blob Container raw data';
 
@@ -74,5 +75,36 @@ CREATE TABLE IF NOT EXISTS IGDB.BRONZE.RAW_GAMETYPE (
     created_at NUMBER(38,0),    -- storing UNIX timestamps
     updated_at NUMBER(38,0),    -- storing UNIX timestamps
     checksum VARCHAR(255)
-    
+);
+
+CREATE TABLE IF NOT EXISTS IGDB.BRONZE.RAW_GAMESTATUS (
+    id SMALLINT PRIMARY KEY,               
+    status VARCHAR(255),
+    created_at NUMBER(38,0),    -- storing UNIX timestamps
+    updated_at NUMBER(38,0),    -- storing UNIX timestamps
+    checksum VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS IGDB.BRONZE.RAW_POPTYPE (
+    id SMALLINT PRIMARY KEY,               
+    popularity_source SMALLINT,
+    name VARCHAR(255),
+    created_at NUMBER(38,0),    -- storing UNIX timestamps
+    updated_at NUMBER(38,0),    -- storing UNIX timestamps
+    checksum VARCHAR(255),
+    external_popularity_source SMALLINT  
+);
+
+CREATE TABLE IF NOT EXISTS IGDB.BRONZE.RAW_POPPRIMITIVE (
+    id SMALLINT PRIMARY KEY,     
+    game_id SMALLINT,
+    popularity_type SMALLINT,
+    popularity_source SMALLINT,
+    value FLOAT,                -- ensures sceintific notation is handled
+    name VARCHAR(255),
+    calculated_at NUMBER(38,0), -- storing UNIX timestamps
+    created_at NUMBER(38,0),    -- storing UNIX timestamps
+    updated_at NUMBER(38,0),    -- storing UNIX timestamps
+    checksum VARCHAR(255),
+    external_popularity_source SMALLINT
 );

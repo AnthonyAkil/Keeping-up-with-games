@@ -6,8 +6,9 @@ models:
           - unique
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
+              arguments:
+                min_value: 0
+                inclusive: true
 
       - name: NAME
         data_tests:
@@ -16,6 +17,7 @@ models:
       - name: AVERAGE_RATING
         data_tests:
           - dbt_utils.accepted_range:
+              arguments:
                 min_value: 0
                 max_value: 100
                 inclusive: true
@@ -24,15 +26,17 @@ models:
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
+              arguments:
+                min_value: 0
+                inclusive: true
 
       - name: WISHLIST_COUNT
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
+              arguments:
+                min_value: 0
+                inclusive: true
 
 
   - name: CLEAN_FRANCHISE
@@ -42,8 +46,9 @@ models:
           - unique
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
+              arguments:
+                min_value: 0
+                inclusive: true
 
       - name: NAME
         data_tests:
@@ -62,8 +67,9 @@ models:
           - unique
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
+              arguments:
+                min_value: 0
+                inclusive: true
 
       - name: NAME
         data_tests:
@@ -82,8 +88,9 @@ models:
           - unique
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
+              arguments:
+                min_value: 0
+                inclusive: true
 
       - name: TYPE
         data_tests:
@@ -102,8 +109,9 @@ models:
           - unique
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
+              arguments:
+                min_value: 0
+                inclusive: true
 
       - name: NAME
         data_tests:
@@ -122,8 +130,9 @@ models:
           - unique
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
+              arguments:
+                min_value: 0
+                inclusive: true
 
       - name: NAME
         data_tests:
@@ -133,6 +142,72 @@ models:
       - name: DATE_CREATED_AT
         data_tests:
           - not_null
+
+
+  - name: CLEAN_POPTYPE
+    columns:
+      - name: ID
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: NAME
+        data_tests:
+          - unique
+          - not_null
+
+
+  - name: CLEAN_POPPRIMITIVE
+    columns:
+      - name: ID
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: FK_GAME
+        data_tests:
+          - unique
+          - not_null
+      
+      - name: FK_POPULARITY_TYPE
+        data_tests:
+          - not_null
+
+      - name: POPULARITY_SCORE
+        data_tests:
+          - not_null
+
+      - name: DATE_MEASURED_AT
+        data_tests:
+          - not_null
+
+
+  - name: CLEAN_GAMESTATUS
+    columns:
+      - name: ID
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: STATUS
+        data_tests:
+          - unique
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Alpha', 'Beta', 'Cancelled', 'Delisted', 'Early Access', 'Offline', 'Released', 'Rumored']
 
 
   - name: CLEAN_BRIDGE_FRANCHISE
@@ -145,7 +220,7 @@ models:
         data_tests:
           - not_null
 
-  
+
   - name: CLEAN_BRIDGE_GAMEMODE
     columns:
       - name: FK_GAME
