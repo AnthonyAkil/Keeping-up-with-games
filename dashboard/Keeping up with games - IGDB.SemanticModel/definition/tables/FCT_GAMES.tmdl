@@ -3,6 +3,7 @@ table FCT_GAMES
 
 	column 'Game ID'
 		dataType: double
+		isKey
 		lineageTag: dfd71ae5-36a2-4c79-9c3d-fea2efdd5919
 		summarizeBy: none
 		sourceColumn: Game ID
@@ -31,49 +32,61 @@ table FCT_GAMES
 
 	column 'Average rating'
 		dataType: double
+		formatString: 0.00
 		lineageTag: ec103cf7-186a-4ca8-a280-221e522b7722
 		summarizeBy: sum
 		sourceColumn: Average rating
 
 		annotation SummarizationSetBy = Automatic
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	column 'Number of reviews'
 		dataType: double
+		formatString: #,0
 		lineageTag: 7c99596c-99ab-4b1c-bf64-15e7a377ffcf
 		summarizeBy: sum
 		sourceColumn: Number of reviews
 
 		annotation SummarizationSetBy = Automatic
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	column 'Wishlist count'
 		dataType: double
+		formatString: #,0
 		lineageTag: a0f458e7-2cc2-49b2-afec-42fd82be4ffb
 		summarizeBy: sum
 		sourceColumn: Wishlist count
 
 		annotation SummarizationSetBy = Automatic
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	column 'Date game initial release'
 		dataType: dateTime
-		formatString: Long Date
+		formatString: yyyy-mm-dd
 		lineageTag: 7bde4a5e-913e-4f52-9ed9-88667bd78a26
 		summarizeBy: none
 		sourceColumn: Date game initial release
 
-		variation Variation
-			isDefault
-			relationship: 8e468874-1418-4aca-afa5-139fc38b7f52
-			defaultHierarchy: LocalDateTable_8b530313-4429-4e10-a9a0-130cdceca1a8.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Status
+		dataType: string
+		lineageTag: d419955e-a8d2-4957-a40b-396cdf2c6331
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Weighted rating'
+		dataType: double
+		lineageTag: 14b9134d-a4d3-4952-996f-3a57ecd8f5d1
+		summarizeBy: sum
+		sourceColumn: Weighted rating
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	partition FCT_GAMES = m
 		mode: import
@@ -87,4 +100,6 @@ table FCT_GAMES
 				    FCT_GAMES_View
 
 	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
 

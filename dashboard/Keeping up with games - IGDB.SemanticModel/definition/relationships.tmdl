@@ -1,66 +1,57 @@
-relationship cbcdebde-a87e-4eec-91cc-0ab17e408ed0
-	joinOnDateBehavior: datePartOnly
-	fromColumn: DIM_FRANCHISE.'Date franchise created'
-	toColumn: LocalDateTable_75c9fcca-4dc4-4d04-8a12-5f36ae17e4d8.Date
-
-relationship 7f7ff166-a434-4cce-a9f2-2d96a66cbafe
-	joinOnDateBehavior: datePartOnly
-	fromColumn: DIM_GAMEMODE.'Date game mode created'
-	toColumn: LocalDateTable_ff4cc0d3-f0ba-4511-a7fb-55dfa8cf39b6.Date
-
-relationship 30781f4a-379c-4023-968a-d9791888b4ea
-	joinOnDateBehavior: datePartOnly
-	fromColumn: DIM_GAMETYPE.'Date game type created'
-	toColumn: LocalDateTable_8d8ea99c-16cf-493b-a615-a5b97e5c18df.Date
-
-relationship e1a47dab-c3de-4ee0-83b0-cc28eadc3d8e
-	joinOnDateBehavior: datePartOnly
-	fromColumn: DIM_GENRE.'Date genre created'
-	toColumn: LocalDateTable_09d0efa4-6384-410f-8025-0e1db0f167c4.Date
-
-relationship a81a0480-5ccf-41df-9598-86050c719458
-	joinOnDateBehavior: datePartOnly
-	fromColumn: DIM_PLATFORM.'Date platform created'
-	toColumn: LocalDateTable_407a8f15-b710-44b7-9fe5-3ee1423e95e4.Date
-
-relationship 8e468874-1418-4aca-afa5-139fc38b7f52
-	joinOnDateBehavior: datePartOnly
-	fromColumn: FCT_GAMES.'Date game initial release'
-	toColumn: LocalDateTable_8b530313-4429-4e10-a9a0-130cdceca1a8.Date
-
 relationship AutoDetected_110d004d-965e-419e-ad9c-ae2884fb4c11
+	crossFilteringBehavior: bothDirections
 	fromColumn: DIM_BRIDGE_FRANCHISE.'Game ID'
 	toColumn: FCT_GAMES.'Game ID'
 
 relationship AutoDetected_aea43dd0-1fb3-40ab-89fb-b4ad1ef67752
+	crossFilteringBehavior: bothDirections
 	fromColumn: DIM_BRIDGE_GAMEMODE.'Game ID'
 	toColumn: FCT_GAMES.'Game ID'
 
 relationship AutoDetected_d67582fd-ddc7-4bb6-9e21-2566c03b1c81
+	crossFilteringBehavior: bothDirections
 	fromColumn: DIM_BRIDGE_PLATFORM.'Game ID'
 	toColumn: FCT_GAMES.'Game ID'
 
 relationship AutoDetected_48a0fc69-fb79-4db1-8d9c-651d3db541ef
+	crossFilteringBehavior: bothDirections
 	fromColumn: DIM_BRIDGE_GENRE.'Game ID'
 	toColumn: FCT_GAMES.'Game ID'
 
 relationship AutoDetected_442c18a8-5794-4991-a58f-d3560451d4a0
+	crossFilteringBehavior: bothDirections
 	fromColumn: DIM_BRIDGE_FRANCHISE.'Franchise ID'
 	toColumn: DIM_FRANCHISE.'Franchise ID'
 
 relationship AutoDetected_8292753e-d7dd-4b14-ad92-e9151bb24f3a
+	crossFilteringBehavior: bothDirections
 	fromColumn: DIM_BRIDGE_GAMEMODE.'Game mode ID'
 	toColumn: DIM_GAMEMODE.'Game mode ID'
 
 relationship AutoDetected_1d813f4d-a917-4d49-8d22-f8cf6f2a6aba
+	crossFilteringBehavior: bothDirections
 	fromColumn: DIM_BRIDGE_PLATFORM.'Platform ID'
 	toColumn: DIM_PLATFORM.'Platform ID'
 
 relationship AutoDetected_3cdcd7d7-8036-4173-a842-9acd17097945
+	crossFilteringBehavior: bothDirections
 	fromColumn: DIM_BRIDGE_GENRE.'Genre ID'
 	toColumn: DIM_GENRE.'Genre ID'
 
 relationship AutoDetected_eef7e531-5af4-4dd0-bb10-a1b440d64c3d
 	fromColumn: FCT_GAMES.'Game type ID'
 	toColumn: DIM_GAMETYPE.'Game type ID'
+
+relationship 006c55ed-8918-f875-d1dc-1924b65be8f9
+	fromColumn: FCT_GAMES.'Date game initial release'
+	toColumn: DIM_DATE.Date
+
+relationship AutoDetected_85f9d1b8-b50f-42b9-a5ea-16432e4404eb
+	fromColumn: FCT_DAILY_POPULARITY.'Popularity type ID'
+	toColumn: DIM_POPTYPE.'Popularity type ID'
+
+relationship 8adcf664-09ce-35a7-e3b5-5d5757217bac
+	crossFilteringBehavior: bothDirections
+	fromColumn: FCT_DAILY_POPULARITY.'Game ID'
+	toColumn: FCT_GAMES.'Game ID'
 

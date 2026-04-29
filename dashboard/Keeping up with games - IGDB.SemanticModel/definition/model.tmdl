@@ -6,29 +6,30 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation __PBI_TimeIntelligenceEnabled = 1
+annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["DIM_BRIDGE_FRANCHISE","DIM_BRIDGE_GAMEMODE","DIM_BRIDGE_PLATFORM","DIM_BRIDGE_GENRE","DIM_FRANCHISE","DIM_GAMEMODE","DIM_GAMETYPE","DIM_GENRE","DIM_PLATFORM","FCT_GAMES"]
+annotation PBI_QueryOrder = ["DIM_BRIDGE_FRANCHISE","DIM_BRIDGE_GAMEMODE","DIM_BRIDGE_PLATFORM","DIM_BRIDGE_GENRE","DIM_FRANCHISE","DIM_GAMEMODE","DIM_GAMETYPE","DIM_GENRE","DIM_PLATFORM","FCT_GAMES","__Measures","DIM_POPTYPE","FCT_DAILY_POPULARITY"]
 
 annotation PBI_ProTooling = ["DevMode"]
+
+annotation __TEdtr = 1
 
 ref table DIM_BRIDGE_FRANCHISE
 ref table DIM_BRIDGE_GAMEMODE
 ref table DIM_BRIDGE_PLATFORM
 ref table DIM_BRIDGE_GENRE
 ref table DIM_FRANCHISE
-ref table DateTableTemplate_283c8cd1-9735-4196-8f1b-b4ae20bf6863
-ref table LocalDateTable_75c9fcca-4dc4-4d04-8a12-5f36ae17e4d8
 ref table DIM_GAMEMODE
-ref table LocalDateTable_ff4cc0d3-f0ba-4511-a7fb-55dfa8cf39b6
 ref table DIM_GAMETYPE
-ref table LocalDateTable_8d8ea99c-16cf-493b-a615-a5b97e5c18df
 ref table DIM_GENRE
-ref table LocalDateTable_09d0efa4-6384-410f-8025-0e1db0f167c4
 ref table DIM_PLATFORM
-ref table LocalDateTable_407a8f15-b710-44b7-9fe5-3ee1423e95e4
 ref table FCT_GAMES
-ref table LocalDateTable_8b530313-4429-4e10-a9a0-130cdceca1a8
+ref table DIM_DATE
+ref table __Measures
+ref table DIM_POPTYPE
+ref table FCT_DAILY_POPULARITY
+ref table 'Top N Selection'
+ref table 'Game Aspects'
 
 ref cultureInfo en-US
 

@@ -1,0 +1,72 @@
+table FCT_DAILY_POPULARITY
+	lineageTag: 0775bde0-1ed0-4f04-be89-5f56cb4ad86d
+
+	column 'Popularity ID'
+		dataType: double
+		isKey
+		lineageTag: 2678328e-1d87-4869-9448-b2bf6f8a343a
+		summarizeBy: count
+		sourceColumn: Popularity ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Game ID'
+		dataType: double
+		lineageTag: 44bba8dc-0ce3-4a88-a11a-9663a22f1f3e
+		summarizeBy: none
+		sourceColumn: Game ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Popularity type ID'
+		dataType: double
+		lineageTag: 9b7ff0ef-c9d1-4675-bc6f-27d0290aac0e
+		summarizeBy: none
+		sourceColumn: Popularity type ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Popularity score'
+		dataType: double
+		lineageTag: 28ace767-4f58-416e-9c32-d20dde7ef47b
+		summarizeBy: sum
+		sourceColumn: Popularity score
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Date popularity measured at'
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: c8f90a29-50f8-408f-8dc8-44b2ae0d1fee
+		summarizeBy: none
+		sourceColumn: Date popularity measured at
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	partition FCT_DAILY_POPULARITY = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    FCT_GAMES_View = GOLD_Schema{[Name="FCT_DAILY_POPULARITY",Kind="View"]}[Data]
+				in
+				    FCT_GAMES_View
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

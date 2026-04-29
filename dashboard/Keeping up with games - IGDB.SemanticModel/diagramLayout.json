@@ -4,7 +4,7 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 0,
+        "x": 434.25132803921406,
         "y": 0
       },
       "nodes": [
@@ -137,10 +137,87 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1379.8848206212481,
+            "y": 442.49771696091807
+          },
+          "nodeIndex": "DIM_DATE",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1613.8848206212481,
+            "y": 490.49771696091807
+          },
+          "nodeIndex": "__Measures",
+          "nodeLineageTag": "63469b85-5201-4ac2-b91b-60a1c408c07f",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1450.1384482791448,
+            "y": 961.34967946202494
+          },
+          "nodeIndex": "DIM_POPTYPE",
+          "nodeLineageTag": "f76c1f4f-5143-4072-bd34-71f267e5942d",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1032.0003815569494,
+            "y": 714.42911097200363
+          },
+          "nodeIndex": "FCT_DAILY_POPULARITY",
+          "nodeLineageTag": "0775bde0-1ed0-4f04-be89-5f56cb4ad86d",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1847.8848206212481,
+            "y": 457.67483973101253
+          },
+          "nodeIndex": "Top N Selection",
+          "nodeLineageTag": "cc619697-517c-4c2e-b5bf-8c79e65b1127",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2081.8848206212479,
+            "y": 493.67483973101253
+          },
+          "nodeIndex": "Game Aspects",
+          "nodeLineageTag": "48f9a572-d0ad-4971-9454-b50fae24ae5c",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",
-      "zoomValue": 40.0525547248832,
+      "zoomValue": 36.032521884462639,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,

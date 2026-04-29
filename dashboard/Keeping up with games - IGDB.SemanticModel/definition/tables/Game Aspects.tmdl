@@ -1,0 +1,51 @@
+table 'Game Aspects'
+	lineageTag: 48f9a572-d0ad-4971-9454-b50fae24ae5c
+
+	column 'Game Aspects'
+		lineageTag: 68950494-78ca-49c0-b43a-bf1372eaa834
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Game Aspects Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Game Aspects Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Game Aspects Fields'
+		isHidden
+		lineageTag: d375db76-babc-44d9-8830-ec73d5cd7c9f
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Game Aspects Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Game Aspects Order'
+		isHidden
+		formatString: 0
+		lineageTag: e4840651-01e8-4b16-a483-f02593a26cf5
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Game Aspects' = calculated
+		mode: import
+		source =
+				{
+				    ("Platforms", NAMEOF('DIM_PLATFORM'[Platform name]), 0),
+				    ("Franchises", NAMEOF('DIM_FRANCHISE'[Franchise name]), 1),
+				    ("Game modes", NAMEOF('DIM_GAMEMODE'[Game mode name]), 2),
+				    ("Genres", NAMEOF('DIM_GENRE'[Genre name]), 3),
+				    ("Game types", NAMEOF('DIM_GAMETYPE'[Game type name]), 4)
+				}
+
+	annotation PBI_Id = 5a87504587944a1b94cd9e7c1e47c96e
+

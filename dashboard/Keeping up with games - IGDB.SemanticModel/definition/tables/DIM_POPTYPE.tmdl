@@ -1,0 +1,37 @@
+table DIM_POPTYPE
+	lineageTag: f76c1f4f-5143-4072-bd34-71f267e5942d
+
+	column 'Popularity type ID'
+		dataType: double
+		isKey
+		lineageTag: 199bd6c5-0b88-49d3-b8ad-a01cfac9fd3c
+		summarizeBy: none
+		sourceColumn: Popularity type ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Popularity type name'
+		dataType: string
+		lineageTag: 7541b556-2f9e-4cd9-922b-aa8865c0b2b3
+		summarizeBy: none
+		sourceColumn: Popularity type name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DIM_POPTYPE = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases("ARWIGJK-UW46260.snowflakecomputing.com","COMPUTE_WH",[Implementation="2.0"]),
+				    IGDB_Database = Source{[Name="IGDB",Kind="Database"]}[Data],
+				    GOLD_Schema = IGDB_Database{[Name="GOLD",Kind="Schema"]}[Data],
+				    FCT_GAMES_View = GOLD_Schema{[Name="DIM_POPTYPE",Kind="View"]}[Data]
+				in
+				    FCT_GAMES_View
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

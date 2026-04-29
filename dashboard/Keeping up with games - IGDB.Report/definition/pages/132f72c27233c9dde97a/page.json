@@ -1,0 +1,193 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "132f72c27233c9dde97a",
+  "displayName": "Overview",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "objects": {
+    "outspace": [
+      {
+        "properties": {
+          "image": {
+            "image": {
+              "name": {
+                "expr": {
+                  "Literal": {
+                    "Value": "''"
+                  }
+                }
+              },
+              "url": {
+                "expr": {
+                  "Literal": {
+                    "Value": "''"
+                  }
+                }
+              }
+            }
+          },
+          "transparency": {
+            "expr": {
+              "Literal": {
+                "Value": "0D"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "background": [
+      {
+        "properties": {
+          "transparency": {
+            "expr": {
+              "Literal": {
+                "Value": "30D"
+              }
+            }
+          },
+          "image": {
+            "image": {
+              "name": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Background Image.png'"
+                  }
+                }
+              },
+              "url": {
+                "expr": {
+                  "ResourcePackageItem": {
+                    "PackageName": "RegisteredResources",
+                    "PackageType": 1,
+                    "ItemName": "Background_Image5643501788472853.png"
+                  }
+                }
+              },
+              "scaling": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Normal'"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "visualInteractions": [
+    {
+      "source": "597da34bc0d941e79b68",
+      "target": "6c9c8c759c6430e75c17",
+      "type": "NoFilter"
+    },
+    {
+      "source": "6c9c8c759c6430e75c17",
+      "target": "f74abf1010c477606adb",
+      "type": "NoFilter"
+    },
+    {
+      "source": "6c9c8c759c6430e75c17",
+      "target": "f739a3396beb620634bb",
+      "type": "NoFilter"
+    },
+    {
+      "source": "6c9c8c759c6430e75c17",
+      "target": "2efbe2df247462148583",
+      "type": "NoFilter"
+    },
+    {
+      "source": "597da34bc0d941e79b68",
+      "target": "395886d4bc094c018aa7",
+      "type": "NoFilter"
+    },
+    {
+      "source": "597da34bc0d941e79b68",
+      "target": "59a8be2bde167d1036ab",
+      "type": "NoFilter"
+    },
+    {
+      "source": "48ccb56870ea72b3ce99",
+      "target": "395886d4bc094c018aa7",
+      "type": "NoFilter"
+    },
+    {
+      "source": "48ccb56870ea72b3ce99",
+      "target": "2794ae13a84200bc4033",
+      "type": "NoFilter"
+    },
+    {
+      "source": "88f2d1eea008506bbe07",
+      "target": "f739a3396beb620634bb",
+      "type": "NoFilter"
+    },
+    {
+      "source": "48ccb56870ea72b3ce99",
+      "target": "88f2d1eea008506bbe07",
+      "type": "NoFilter"
+    },
+    {
+      "source": "48ccb56870ea72b3ce99",
+      "target": "b56cd6d5360ddac940ca",
+      "type": "NoFilter"
+    },
+    {
+      "source": "48ccb56870ea72b3ce99",
+      "target": "597da34bc0d941e79b68",
+      "type": "NoFilter"
+    },
+    {
+      "source": "48ccb56870ea72b3ce99",
+      "target": "f739a3396beb620634bb",
+      "type": "NoFilter"
+    },
+    {
+      "source": "48ccb56870ea72b3ce99",
+      "target": "6c9c8c759c6430e75c17",
+      "type": "NoFilter"
+    },
+    {
+      "source": "48ccb56870ea72b3ce99",
+      "target": "59a8be2bde167d1036ab",
+      "type": "NoFilter"
+    },
+    {
+      "source": "48ccb56870ea72b3ce99",
+      "target": "1c725c97a6a10e383700",
+      "type": "NoFilter"
+    },
+    {
+      "source": "597da34bc0d941e79b68",
+      "target": "48ccb56870ea72b3ce99",
+      "type": "NoFilter"
+    },
+    {
+      "source": "597da34bc0d941e79b68",
+      "target": "f739a3396beb620634bb",
+      "type": "NoFilter"
+    },
+    {
+      "source": "597da34bc0d941e79b68",
+      "target": "2efbe2df247462148583",
+      "type": "NoFilter"
+    },
+    {
+      "source": "597da34bc0d941e79b68",
+      "target": "88f2d1eea008506bbe07",
+      "type": "NoFilter"
+    },
+    {
+      "source": "597da34bc0d941e79b68",
+      "target": "2794ae13a84200bc4033",
+      "type": "NoFilter"
+    },
+    {
+      "source": "597da34bc0d941e79b68",
+      "target": "09fa87f33b6be6bc5a85",
+      "type": "NoFilter"
+    }
+  ]
+}

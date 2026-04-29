@@ -3,6 +3,7 @@ table DIM_GENRE
 
 	column 'Genre ID'
 		dataType: double
+		isKey
 		lineageTag: c90ffe11-cb0b-4303-88c1-aebf085dbe21
 		summarizeBy: none
 		sourceColumn: Genre ID
@@ -21,19 +22,16 @@ table DIM_GENRE
 
 	column 'Date genre created'
 		dataType: dateTime
-		formatString: Long Date
+		formatString: yyyy-mm-dd
 		lineageTag: d912f715-9d31-4e51-b144-87820d1b521c
 		summarizeBy: none
 		sourceColumn: Date genre created
 
-		variation Variation
-			isDefault
-			relationship: e1a47dab-c3de-4ee0-83b0-cc28eadc3d8e
-			defaultHierarchy: LocalDateTable_09d0efa4-6384-410f-8025-0e1db0f167c4.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
 	partition DIM_GENRE = m
 		mode: import

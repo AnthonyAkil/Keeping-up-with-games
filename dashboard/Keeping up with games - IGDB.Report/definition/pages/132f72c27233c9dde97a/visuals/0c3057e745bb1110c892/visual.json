@@ -1,0 +1,57 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.8.0/schema.json",
+  "name": "0c3057e745bb1110c892",
+  "position": {
+    "x": 1114.4444444444443,
+    "y": 17.777777777777779,
+    "z": 11000,
+    "height": 28.888888888888889,
+    "width": 84.444444444444443,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "actionButton",
+    "objects": {
+      "icon": [
+        {
+          "properties": {
+            "shapeType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'information'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "visualLink": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "tooltip": {
+              "expr": {
+                "Literal": {
+                  "Value": "'“IGDB Visits”: Game page visits on IGDB.com. “IGDB Want to Play”: Additions to IGDB users'' “Want to Play” lists. “IGDB Playing”: Additions to IGDB users’ “Playing” lists. “IGDB Played”: Additions to IGDB users’ “Played” lists. “Steam 24hr Peak Players”: Peak CCU over the past 24 hours. “Steam Positive Reviews”: Total number of positive reviews. “Steam Negative Reviews”: Total number of negative reviews. “Steam Total Reviews”: Total number of reviews. “Steam Global Top Sellers”: Top sellers globally. “Most Wishlisted Upcoming”: Upcomming wishlisted games. “Twitch Hours Watched”: Hours Watched per game category on Twitch.'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "howCreated": "InsertVisualButton"
+}

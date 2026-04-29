@@ -1,0 +1,103 @@
+table __Measures
+	lineageTag: 63469b85-5201-4ac2-b91b-60a1c408c07f
+
+	measure 'Game Popularity Rank' =
+			
+			RANKX(
+			    ALLSELECTED('FCT_GAMES'[Game Name]),
+			    CALCULATE(SUM(FCT_DAILY_POPULARITY[Popularity score])),
+			    ,
+			    DESC,
+			    DENSE
+			)
+		formatString: 0
+		lineageTag: 59315d85-e038-4c00-8d0c-a5769f666781
+
+	measure 'Is Top N Game' =
+			
+			VAR SelectedN = SELECTEDVALUE('Top N Selection'[Top N Selection], 10)
+			RETURN
+			IF([Game Popularity Rank] <= SelectedN, 1, 0)
+		formatString: 0
+		lineageTag: 8e5eaf97-4fec-417f-9afe-00865b6a6622
+
+	measure 'Top 5 by Number of Reviews' =
+			
+			VAR TopSelected = 5
+			VAR CurrentAvg = CALCULATE(SUM(FCT_GAMES[Number of reviews]))
+			VAR SelectedAspect = SELECTEDVALUE('Game Aspects'[Game Aspects Fields])
+			VAR CurrentFranchise = MAX('DIM_FRANCHISE'[Franchise name])
+			VAR CurrentPlatform  = MAX('DIM_PLATFORM'[Platform name])
+			VAR CurrentGenre     = MAX('DIM_GENRE'[Genre name])
+			VAR CurrentGameMode  = MAX('DIM_GAMEMODE'[Game mode name])
+			VAR CurrentGameType  = MAX('DIM_GAMETYPE'[Game type name])
+			
+			VAR RankedFranchise = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_FRANCHISE'), 'DIM_FRANCHISE'[Franchise name], "AspectAvg", CALCULATE(SUM(FCT_GAMES[Number of reviews]))), [AspectAvg], DESC)
+			VAR RankedPlatform  = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_PLATFORM'),  'DIM_PLATFORM'[Platform name],   "AspectAvg", CALCULATE(SUM(FCT_GAMES[Number of reviews]))), [AspectAvg], DESC)
+			VAR RankedGenre     = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_GENRE'),     'DIM_GENRE'[Genre name],         "AspectAvg", CALCULATE(SUM(FCT_GAMES[Number of reviews]))), [AspectAvg], DESC)
+			VAR RankedGameMode  = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_GAMEMODE'),  'DIM_GAMEMODE'[Game mode name],  "AspectAvg", CALCULATE(SUM(FCT_GAMES[Number of reviews]))), [AspectAvg], DESC)
+			VAR RankedGameType  = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_GAMETYPE'),  'DIM_GAMETYPE'[Game type name],  "AspectAvg", CALCULATE(SUM(FCT_GAMES[Number of reviews]))), [AspectAvg], DESC)
+			
+			VAR IsInTop =
+			    SWITCH(
+			        SelectedAspect,
+			        "'DIM_FRANCHISE'[Franchise name]", COUNTROWS(FILTER(RankedFranchise, 'DIM_FRANCHISE'[Franchise name] = CurrentFranchise)) > 0,
+			        "'DIM_PLATFORM'[Platform name]",   COUNTROWS(FILTER(RankedPlatform,  'DIM_PLATFORM'[Platform name]   = CurrentPlatform))  > 0,
+			        "'DIM_GENRE'[Genre name]",         COUNTROWS(FILTER(RankedGenre,     'DIM_GENRE'[Genre name]         = CurrentGenre))     > 0,
+			        "'DIM_GAMEMODE'[Game mode name]",  COUNTROWS(FILTER(RankedGameMode,  'DIM_GAMEMODE'[Game mode name]  = CurrentGameMode))  > 0,
+			        "'DIM_GAMETYPE'[Game type name]",  COUNTROWS(FILTER(RankedGameType,  'DIM_GAMETYPE'[Game type name]  = CurrentGameType))  > 0
+			    )
+			
+			RETURN
+			IF(IsInTop, CurrentAvg)
+		lineageTag: 5b24abcc-e273-4c4e-9705-6c61f0af6d2a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Top 5 by Weighted Average' =
+			
+			VAR TopSelected = 5
+			VAR CurrentAvg = CALCULATE(AVERAGE(FCT_GAMES[Weighted rating]))
+			VAR SelectedAspect = SELECTEDVALUE('Game Aspects'[Game Aspects Fields])
+			VAR CurrentFranchise = MAX('DIM_FRANCHISE'[Franchise name])
+			VAR CurrentPlatform  = MAX('DIM_PLATFORM'[Platform name])
+			VAR CurrentGenre     = MAX('DIM_GENRE'[Genre name])
+			VAR CurrentGameMode  = MAX('DIM_GAMEMODE'[Game mode name])
+			VAR CurrentGameType  = MAX('DIM_GAMETYPE'[Game type name])
+			
+			VAR RankedFranchise = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_FRANCHISE'), 'DIM_FRANCHISE'[Franchise name], "AspectAvg", CALCULATE(AVERAGE(FCT_GAMES[Weighted rating]))), [AspectAvg], DESC)
+			VAR RankedPlatform  = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_PLATFORM'),  'DIM_PLATFORM'[Platform name],   "AspectAvg", CALCULATE(AVERAGE(FCT_GAMES[Weighted rating]))), [AspectAvg], DESC)
+			VAR RankedGenre     = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_GENRE'),     'DIM_GENRE'[Genre name],         "AspectAvg", CALCULATE(AVERAGE(FCT_GAMES[Weighted rating]))), [AspectAvg], DESC)
+			VAR RankedGameMode  = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_GAMEMODE'),  'DIM_GAMEMODE'[Game mode name],  "AspectAvg", CALCULATE(AVERAGE(FCT_GAMES[Weighted rating]))), [AspectAvg], DESC)
+			VAR RankedGameType  = TOPN(TopSelected, SUMMARIZE(ALLSELECTED('DIM_GAMETYPE'),  'DIM_GAMETYPE'[Game type name],  "AspectAvg", CALCULATE(AVERAGE(FCT_GAMES[Weighted rating]))), [AspectAvg], DESC)
+			
+			VAR IsInTop =
+			    SWITCH(
+			        SelectedAspect,
+			        "'DIM_FRANCHISE'[Franchise name]", COUNTROWS(FILTER(RankedFranchise, 'DIM_FRANCHISE'[Franchise name] = CurrentFranchise)) > 0,
+			        "'DIM_PLATFORM'[Platform name]",   COUNTROWS(FILTER(RankedPlatform,  'DIM_PLATFORM'[Platform name]   = CurrentPlatform))  > 0,
+			        "'DIM_GENRE'[Genre name]",         COUNTROWS(FILTER(RankedGenre,     'DIM_GENRE'[Genre name]         = CurrentGenre))     > 0,
+			        "'DIM_GAMEMODE'[Game mode name]",  COUNTROWS(FILTER(RankedGameMode,  'DIM_GAMEMODE'[Game mode name]  = CurrentGameMode))  > 0,
+			        "'DIM_GAMETYPE'[Game type name]",  COUNTROWS(FILTER(RankedGameType,  'DIM_GAMETYPE'[Game type name]  = CurrentGameType))  > 0
+			    )
+			
+			RETURN
+			IF(IsInTop, CurrentAvg)
+		lineageTag: f99c9ca4-b9dc-4533-addd-8ec05da2d329
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition __Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

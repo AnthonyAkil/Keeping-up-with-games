@@ -2,20 +2,24 @@ table DIM_BRIDGE_FRANCHISE
 	lineageTag: 4e2710ef-a783-4dce-b9b0-c24b142926da
 
 	column 'Game ID'
-		dataType: double
+		dataType: int64
 		lineageTag: 275cac4f-f6fd-427b-87ce-6de639e7ad82
 		summarizeBy: none
 		sourceColumn: Game ID
+
+		changedProperty = DataType
 
 		annotation SummarizationSetBy = Automatic
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column 'Franchise ID'
-		dataType: double
+		dataType: int64
 		lineageTag: d94b99cd-6e81-4d58-af75-5583752468b7
 		summarizeBy: none
 		sourceColumn: Franchise ID
+
+		changedProperty = DataType
 
 		annotation SummarizationSetBy = Automatic
 
@@ -33,4 +37,6 @@ table DIM_BRIDGE_FRANCHISE
 				    DIM_BRIDGE_FRANCHISE_View
 
 	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
 

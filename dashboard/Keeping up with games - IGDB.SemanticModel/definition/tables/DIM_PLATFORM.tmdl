@@ -3,6 +3,7 @@ table DIM_PLATFORM
 
 	column 'Platform ID'
 		dataType: double
+		isKey
 		lineageTag: 8463a235-49c3-461f-8a9e-ba1d4bf2c224
 		summarizeBy: none
 		sourceColumn: Platform ID
@@ -21,19 +22,16 @@ table DIM_PLATFORM
 
 	column 'Date platform created'
 		dataType: dateTime
-		formatString: Long Date
+		formatString: yyyy-mm-dd
 		lineageTag: 2b49d9f4-92db-46a1-bf0e-ba48ca100dd9
 		summarizeBy: none
 		sourceColumn: Date platform created
 
-		variation Variation
-			isDefault
-			relationship: a81a0480-5ccf-41df-9598-86050c719458
-			defaultHierarchy: LocalDateTable_407a8f15-b710-44b7-9fe5-3ee1423e95e4.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
 	partition DIM_PLATFORM = m
 		mode: import

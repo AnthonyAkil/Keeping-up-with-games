@@ -1,0 +1,307 @@
+table DIM_DATE
+	lineageTag: 98637084-917b-4dd3-a286-9680e3e8c945
+
+	column Date
+		isKey
+		formatString: yyyy-mm-dd
+		lineageTag: 65615075-d93d-47d4-91b0-9200852f2214
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column DateKey
+		lineageTag: c30b9c3e-6744-4205-9d2f-ba998e523012
+		summarizeBy: count
+		isNameInferred
+		sourceColumn: [DateKey]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Year
+		formatString: 0
+		lineageTag: 3cec4540-19bf-40c3-80e0-9bb27c45ab1c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNumber
+		formatString: 0
+		lineageTag: 198b4b83-eef2-4e87-b817-51b9d4cddd4d
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [MonthNumber]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthName
+		lineageTag: bb2b1692-70e0-4c88-af35-2296feeec957
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [MonthName]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthShort
+		lineageTag: 61753da0-0b70-4b91-939b-3502771d443b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [MonthShort]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		formatString: 0
+		lineageTag: f5f1cc0a-2558-4394-a241-f3e3ee81676d
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column QuarterName
+		lineageTag: e49e0a11-6585-42a4-bb0b-32c358814da7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [QuarterName]
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfMonth
+		formatString: 0
+		lineageTag: 3a6e2b4e-b86e-4a3d-83e6-2675609a9454
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [DayOfMonth]
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfWeekNumber
+		formatString: 0
+		lineageTag: 052d7bbb-634a-4dab-8dc6-c9a28b705f9d
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [DayOfWeekNumber]
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfWeekName
+		lineageTag: 9c9245dd-a6f9-489f-b8e0-aa5dc4689e90
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [DayOfWeekName]
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfWeekShort
+		lineageTag: b142f3de-8893-4cb1-b639-eb896cb151c2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [DayOfWeekShort]
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekOfYear
+		formatString: 0
+		lineageTag: c659fad0-aec8-4f31-b9e1-8479230d0e8a
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [WeekOfYear]
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfYear
+		formatString: 0
+		lineageTag: cdd8e509-7566-4408-9c90-8291484a9a3a
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [DayOfYear]
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonth
+		formatString: 0
+		lineageTag: a9646dfe-e468-4a0d-8144-cc2d2cc346ce
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [YearMonth]
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonthName
+		lineageTag: 1768d096-6f85-439c-96e0-c854fdfefb99
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [YearMonthName]
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearQuarter
+		formatString: 0
+		lineageTag: 7fc8c881-0847-4203-b7b6-7e56527e9a77
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [YearQuarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearQuarterName
+		lineageTag: 99801f1d-acd1-495c-990a-7fc30449c1c3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [YearQuarterName]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWeekend
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8109c67f-377c-4697-8c67-3bdd0b321f45
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsWeekend]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWeekday
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 1d496909-58f2-4a50-95c2-2e4437fc4684
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsWeekday]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsLeapYear
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 137e22e3-069f-4c8f-b4a1-62a56bd985f7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsLeapYear]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCurrentYear
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 16bcd0e3-9062-4ca1-9339-20b28c408f58
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsCurrentYear]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCurrentMonth
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8e604460-9834-46c6-879f-58a43577eb6b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsCurrentMonth]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCurrentQuarter
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: d00e1f85-0bd8-4652-b30f-247ad0e77617
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsCurrentQuarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPastDate
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 6693fc27-491e-44fa-9763-e3a0eda8a070
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsPastDate]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsFutureDate
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 3dc3e09d-d7e5-467c-b4ee-f54fc0e78cc8
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsFutureDate]
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Date Hierarchy'
+		lineageTag: 821cbe25-9cbc-4fb1-9bb4-fadd0622817e
+
+		level Year
+			lineageTag: 30da93a9-b37a-45e9-9699-4f6c44a0352d
+			column: Year
+
+		level QuarterName
+			lineageTag: 033a82a2-19f7-42f5-8969-03a833d2dbde
+			column: QuarterName
+
+		level MonthName
+			lineageTag: f410f136-eac3-46fa-8976-fc23a993976e
+			column: MonthName
+
+		level MonthShort
+			lineageTag: 947435e3-5869-4b01-b2e3-f50b0eaaff09
+			column: MonthShort
+
+		level Date
+			lineageTag: e82b2511-bb16-4e76-8fb9-9be80f2d2d31
+			column: Date
+
+	partition DIM_DATE = calculated
+		mode: import
+		source = ```
+				
+				VAR StartDate = DATE(1990, 1, 1)
+				VAR EndDate = DATE(2030, 12, 31)
+				
+				RETURN
+				ADDCOLUMNS(
+				    CALENDAR(StartDate, EndDate),
+				    
+				    -- Basic date parts
+				    "DateKey",          FORMAT([Date], "YYYYMMDD") + 0,
+				    "Year",             YEAR([Date]),
+				    "MonthNumber",      MONTH([Date]),
+				    "MonthName",        FORMAT([Date], "MMMM"),
+				    "MonthShort",       FORMAT([Date], "MMM"),
+				    "Quarter",          QUARTER([Date]),
+				    "QuarterName",      "Q" & QUARTER([Date]),
+				    "DayOfMonth",       DAY([Date]),
+				    "DayOfWeekNumber",  WEEKDAY([Date], 2),  -- 1=Monday, 7=Sunday
+				    "DayOfWeekName",    FORMAT([Date], "DDDD"),
+				    "DayOfWeekShort",   FORMAT([Date], "DDD"),
+				    "WeekOfYear",       WEEKNUM([Date], 2),
+				    "DayOfYear",        DATEDIFF(DATE(YEAR([Date]), 1, 1), [Date], DAY) + 1,
+				    
+				    -- Useful combinations
+				    "YearMonth",        YEAR([Date]) * 100 + MONTH([Date]),
+				    "YearMonthName",    FORMAT([Date], "YYYY MMM"),
+				    "YearQuarter",      YEAR([Date]) * 10 + QUARTER([Date]),
+				    "YearQuarterName",  FORMAT([Date], "YYYY") & " Q" & QUARTER([Date]),
+				    
+				    -- Flags
+				    "IsWeekend",        IF(WEEKDAY([Date], 2) >= 6, TRUE, FALSE),
+				    "IsWeekday",        IF(WEEKDAY([Date], 2) < 6, TRUE, FALSE),
+				    "IsLeapYear",       IF(DAY(DATE(YEAR([Date]), 3, 1) - 1) = 29, TRUE, FALSE),
+				    
+				    -- Relative periods (dynamic based on today)
+				    "IsCurrentYear",    IF(YEAR([Date]) = YEAR(TODAY()), TRUE, FALSE),
+				    "IsCurrentMonth",   IF(YEAR([Date]) = YEAR(TODAY()) && MONTH([Date]) = MONTH(TODAY()), TRUE, FALSE),
+				    "IsCurrentQuarter", IF(YEAR([Date]) = YEAR(TODAY()) && QUARTER([Date]) = QUARTER(TODAY()), TRUE, FALSE),
+				    "IsPastDate",       IF([Date] < TODAY(), TRUE, FALSE),
+				    "IsFutureDate",     IF([Date] > TODAY(), TRUE, FALSE)
+				)
+				```
+
+	annotation PBI_Id = 545b8625e06d4fb9995146b95c378be7
+

@@ -3,6 +3,7 @@ table DIM_GAMEMODE
 
 	column 'Game mode ID'
 		dataType: double
+		isKey
 		lineageTag: bd073ed9-6224-433c-891f-e050ca051284
 		summarizeBy: none
 		sourceColumn: Game mode ID
@@ -21,19 +22,16 @@ table DIM_GAMEMODE
 
 	column 'Date game mode created'
 		dataType: dateTime
-		formatString: Long Date
+		formatString: yyyy-mm-dd
 		lineageTag: 13a75d80-6e7c-4420-8336-03fa49221f19
 		summarizeBy: none
 		sourceColumn: Date game mode created
 
-		variation Variation
-			isDefault
-			relationship: 7f7ff166-a434-4cce-a9f2-2d96a66cbafe
-			defaultHierarchy: LocalDateTable_ff4cc0d3-f0ba-4511-a7fb-55dfa8cf39b6.'Date Hierarchy'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
 	partition DIM_GAMEMODE = m
 		mode: import
