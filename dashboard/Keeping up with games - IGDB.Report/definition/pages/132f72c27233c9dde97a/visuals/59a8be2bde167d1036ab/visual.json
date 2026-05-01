@@ -3,7 +3,7 @@
   "name": "59a8be2bde167d1036ab",
   "position": {
     "x": 580,
-    "y": 16.666666666666668,
+    "y": 17.5,
     "z": 4000,
     "height": 90,
     "width": 290,
@@ -17,23 +17,17 @@
           "projections": [
             {
               "field": {
-                "Aggregation": {
+                "Measure": {
                   "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "FCT_GAMES"
-                        }
-                      },
-                      "Property": "Game name"
+                    "SourceRef": {
+                      "Entity": "__Measures"
                     }
                   },
-                  "Function": 3
+                  "Property": "Most Wishlisted Game"
                 }
               },
-              "queryRef": "Min(FCT_GAMES.Game name)",
-              "nativeQueryRef": "Most anticipated game",
-              "displayName": "Most anticipated game"
+              "queryRef": "__Measures.Most Wishlisted Game",
+              "nativeQueryRef": "Most Wishlisted Game"
             }
           ]
         }
@@ -276,7 +270,7 @@
             "section": {
               "expr": {
                 "Literal": {
-                  "Value": "'f9c776dc903637050941'"
+                  "Value": "'5e544b75b0cac0e033b4'"
                 }
               }
             }
@@ -289,187 +283,20 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "0c1d5a7f256c3bee5e97",
+        "name": "6c4bd6626a7a13c22646",
         "ordinal": 0,
         "field": {
-          "Aggregation": {
+          "Measure": {
             "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "FCT_GAMES"
-                  }
-                },
-                "Property": "Game name"
+              "SourceRef": {
+                "Entity": "__Measures"
               }
             },
-            "Function": 3
+            "Property": "Most Wishlisted Game"
           }
         },
         "type": "Advanced",
         "isHiddenInViewMode": true
-      },
-      {
-        "name": "b64232b265089988cc8b",
-        "ordinal": 1,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "FCT_GAMES"
-              }
-            },
-            "Property": "Date game initial release"
-          }
-        },
-        "type": "Categorical",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "f",
-              "Entity": "FCT_GAMES",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "f"
-                          }
-                        },
-                        "Property": "Date game initial release"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "null"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "howCreated": "User",
-        "isHiddenInViewMode": true,
-        "isLockedInViewMode": true
-      },
-      {
-        "name": "441a0054e8b2067e98b0",
-        "ordinal": 2,
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "FCT_GAMES"
-              }
-            },
-            "Property": "Game name"
-          }
-        },
-        "type": "TopN",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "subquery",
-              "Expression": {
-                "Subquery": {
-                  "Query": {
-                    "Version": 2,
-                    "From": [
-                      {
-                        "Name": "f",
-                        "Entity": "FCT_GAMES",
-                        "Type": 0
-                      }
-                    ],
-                    "Select": [
-                      {
-                        "Column": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "f"
-                            }
-                          },
-                          "Property": "Game name"
-                        },
-                        "Name": "field"
-                      }
-                    ],
-                    "OrderBy": [
-                      {
-                        "Direction": 2,
-                        "Expression": {
-                          "Aggregation": {
-                            "Expression": {
-                              "Column": {
-                                "Expression": {
-                                  "SourceRef": {
-                                    "Source": "f"
-                                  }
-                                },
-                                "Property": "Wishlist count"
-                              }
-                            },
-                            "Function": 0
-                          }
-                        }
-                      }
-                    ],
-                    "Top": 1
-                  }
-                }
-              },
-              "Type": 2
-            },
-            {
-              "Name": "f",
-              "Entity": "FCT_GAMES",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "f"
-                          }
-                        },
-                        "Property": "Game name"
-                      }
-                    }
-                  ],
-                  "Table": {
-                    "SourceRef": {
-                      "Source": "subquery"
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        },
-        "howCreated": "User",
-        "isHiddenInViewMode": true,
-        "isLockedInViewMode": true
       }
     ],
     "filterSortOrder": "Custom"

@@ -4,7 +4,7 @@
   "position": {
     "x": 215,
     "y": 141.66666666666669,
-    "z": 14500,
+    "z": 14000,
     "height": 53.333333333333336,
     "width": 205,
     "tabOrder": 14000
@@ -96,7 +96,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Co-operative'"
+                                "Value": "'Battle Royale'"
                               }
                             }
                           ]

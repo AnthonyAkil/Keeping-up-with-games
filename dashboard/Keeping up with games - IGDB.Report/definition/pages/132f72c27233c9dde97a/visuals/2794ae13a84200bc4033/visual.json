@@ -95,7 +95,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'''DIM_FRANCHISE''[Franchise name]'"
+                                "Value": "'''DIM_GAMEMODE''[Game mode name]'"
                               }
                             }
                           ]
@@ -123,7 +123,7 @@
                                 "0": [
                                   {
                                     "Literal": {
-                                      "Value": "'''DIM_FRANCHISE''[Franchise name]'"
+                                      "Value": "'''DIM_GAMEMODE''[Game mode name]'"
                                     }
                                   }
                                 ]
@@ -147,7 +147,7 @@
                         },
                         "valueMap": [
                           {
-                            "0": "Franchises"
+                            "0": "Game modes"
                           }
                         ]
                       }

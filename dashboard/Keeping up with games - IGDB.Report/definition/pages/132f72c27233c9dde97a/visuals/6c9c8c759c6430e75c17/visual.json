@@ -20,16 +20,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DIM_FRANCHISE"
+                      "Entity": "DIM_GAMEMODE"
                     }
                   },
-                  "Property": "Franchise name"
+                  "Property": "Game mode name"
                 }
               },
-              "queryRef": "DIM_FRANCHISE.Franchise name",
-              "nativeQueryRef": "Franchises",
+              "queryRef": "DIM_GAMEMODE.Game mode name",
+              "nativeQueryRef": "Game modes",
               "active": true,
-              "displayName": "Franchises"
+              "displayName": "Game modes"
             }
           ],
           "fieldParameters": [
@@ -649,6 +649,7 @@
           }
         },
         "type": "Categorical",
+        "howCreated": "User",
         "isHiddenInViewMode": true
       }
     ],

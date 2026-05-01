@@ -2151,12 +2151,6 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "game mode": {
-			            "State": "Generated",
-			            "Weight": 0.97
-			          }
-			        },
-			        {
 			          "mode name": {
 			            "State": "Generated",
 			            "Weight": 0.97
@@ -2260,6 +2254,26 @@ cultureInfo en-US
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.5
+			          }
+			        },
+			        {
+			          "Game mode": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Game modes": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -3890,6 +3904,12 @@ cultureInfo en-US
 			          }
 			        },
 			        {
+			          "genre": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
 			          "genre nickname": {
 			            "Type": "Noun",
 			            "State": "Suggested",
@@ -3967,16 +3987,6 @@ cultureInfo en-US
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.476
-			          }
-			        },
-			        {
-			          "Genres": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ],
@@ -9074,6 +9084,72 @@ cultureInfo en-US
 			          }
 			        }
 			      ]
+			    },
+			    "entity___measure.most_wishlisted_game": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "__Measures",
+			          "ConceptualProperty": "Most Wishlisted Game"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "most wishlisted game": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "most wishlisted pastime": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.458
+			          }
+			        },
+			        {
+			          "most wishlisted diversion": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.458
+			          }
+			        },
+			        {
+			          "most wishlisted amusement": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.458
+			          }
+			        },
+			        {
+			          "most wishlisted entertainment": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.458
+			          }
+			        },
+			        {
+			          "most wishlisted recreation": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.458
+			          }
+			        }
+			      ]
 			    }
 			  },
 			  "Relationships": {
@@ -9534,6 +9610,39 @@ cultureInfo en-US
 			          "State": "Generated",
 			          "Weight": 0.99,
 			          "ID": "fct_games_have_dim_bridge_franchises"
+			        }
+			      ]
+			    },
+			    "fct_game_has_entity___measure_most_wishlisted_game": {
+			      "Binding": {
+			        "ConceptualEntity": "FCT_GAMES"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fct_game": {
+			          "Target": {
+			            "Entity": "fct_game"
+			          }
+			        },
+			        "entity___measure.most_wishlisted_game": {
+			          "Target": {
+			            "Entity": "entity___measure.most_wishlisted_game"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fct_game"
+			            },
+			            "Object": {
+			              "Role": "entity___measure.most_wishlisted_game"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fct_games_have_most_wishlisted_game"
 			        }
 			      ]
 			    },

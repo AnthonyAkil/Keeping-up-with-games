@@ -20,16 +20,16 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "DIM_FRANCHISE"
+                      "Entity": "DIM_GAMEMODE"
                     }
                   },
-                  "Property": "Franchise name"
+                  "Property": "Game mode name"
                 }
               },
-              "queryRef": "DIM_FRANCHISE.Franchise name",
-              "nativeQueryRef": "Franchises",
+              "queryRef": "DIM_GAMEMODE.Game mode name",
+              "nativeQueryRef": "Game modes",
               "active": true,
-              "displayName": "Franchises"
+              "displayName": "Game modes"
             }
           ],
           "fieldParameters": [
@@ -396,6 +396,20 @@
                   "Value": "41D"
                 }
               }
+            },
+            "borderShow": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "borderTransparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "60D"
+                }
+              }
             }
           }
         }
@@ -629,7 +643,22 @@
           }
         },
         "type": "Categorical",
+        "howCreated": "User",
         "isHiddenInViewMode": true
+      },
+      {
+        "name": "65520b3fcb4a62144e3d",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DIM_GAMEMODE"
+              }
+            },
+            "Property": "Game mode name"
+          }
+        },
+        "type": "Categorical"
       }
     ],
     "filterSortOrder": "Custom"

@@ -87,6 +87,24 @@ table __Measures
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	measure 'Most Wishlisted Game' = ```
+			
+			
+			VAR HighestWishlist = 
+			    CALCULATE(
+			            MAX(FCT_GAMES[Wishlist count]),
+			            ISBLANK(FCT_GAMES[Date game initial release])
+			    )
+			
+			RETURN
+			    CALCULATE(
+			        FIRSTNONBLANK(FCT_GAMES[Game name], 1), --  returns blank when more than one distinct value exists in the filtered context
+			        FCT_GAMES[Wishlist count] = HighestWishlist,
+			        ISBLANK(FCT_GAMES[Date game initial release])
+			    )
+			```
+		lineageTag: 167157cd-5a45-4694-bba5-309c8069e1aa
+
 	partition __Measures = m
 		mode: import
 		source =

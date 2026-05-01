@@ -42,7 +42,8 @@
                 }
               },
               "queryRef": "FCT_GAMES.Game name",
-              "nativeQueryRef": "Game name"
+              "nativeQueryRef": "Game",
+              "displayName": "Game"
             }
           ]
         }

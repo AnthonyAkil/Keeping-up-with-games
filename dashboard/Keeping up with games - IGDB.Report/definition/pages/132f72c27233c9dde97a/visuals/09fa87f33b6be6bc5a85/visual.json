@@ -27,8 +27,9 @@
                 }
               },
               "queryRef": "FCT_GAMES.Game name",
-              "nativeQueryRef": "Game name",
-              "active": true
+              "nativeQueryRef": "Game",
+              "active": true,
+              "displayName": "Game"
             }
           ]
         },
@@ -464,6 +465,13 @@
                       "Percent": 0
                     }
                   }
+                }
+              }
+            },
+            "labelPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'InsideBase'"
                 }
               }
             }
