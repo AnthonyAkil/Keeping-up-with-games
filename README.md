@@ -25,7 +25,7 @@ As of writing:
 * Ratings stabilize at **500+ reviews**, making the 500–1K range the sweet spot for gauging true community consensus.
 * Daily snapshots are available of game popularity across key metrics such as **Most Watched hours** on Twitch and **Peak CCU** (Concurrent Users).
 
-![Dashboard](diagrams\Dashboard.png)
+![Dashboard](diagrams/Dashboard.png)
 
 ## Prerequisites
 
@@ -36,11 +36,11 @@ As of writing:
 * IGDB API Client ID and Secret
 
 ## Getting started
-* [API setup](api_extract_data\README.md)
-* [Azure setup](IaC\README.md)
-* [Snowflake setup](sql\README.md)
-* [dbt setup](dbt_transformation_layer\README.md)
-* [Docker setup for Airflow](airflow_orchestration_layer\README.md)
+* [API setup](api_extract_data/README.md)
+* [Azure setup](IaC/README.md)
+* [Snowflake objects setup](sql/README.md)
+* [dbt setup](dbt_transformation_layer/README.md)
+* [Docker setup for Airflow](airflow_orchestration_layer/README.md)
 
 
 
