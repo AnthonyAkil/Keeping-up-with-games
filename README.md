@@ -7,181 +7,115 @@ Using data to stay up-to-date on video games!
 I haven't played video games for a while and I am out of touch with what games are considered cool and which upcoming releases are highly anticipated. Let's resolve this using the Internet Game DataBase (IGDB) data from Twitch!
 
 To do so, the end goal should be to:
-* Find insights into **what games are currently popular**
-* Have an overview of upcoming releases
+* Find insights into **what games are <u>currently</u> popular**.
+* Have an overview of games that haven't released yet but are highly anticipated.
 
 Explicit tasks:
+* Set-up a data pipeline that fetches the required data from the IGDB API.
 * Build a datamodel that can be leveraged for BI.
-* Create a dashboard that provides insights that higlights features of successful games.
+* Create a dashboard which provides insights on the current state of game trends.
+
+
+## High-over project results
+
+As of writing:
+* Processed **~36,000 games** sourced from the IGDB API.
+* Top wishlisted unreleased game: **The Elder Scrolls VI**.
+* The game **GTA V** ranks highest in both Single and Multiplayer ratings across IGDB.
+* Ratings stabilize at **500+ reviews**, making the 500–1K range the sweet spot for gauging true community consensus.
+* Daily snapshots are available of game popularity across key metrics such as **Most Watched hours** on Twitch and **Peak CCU** (Concurrent Users).
+
+![Dashboard](diagrams\Dashboard.png)
+
+## Prerequisites
+
+* Docker + Docker Desktop
+* Azure Account with sufficient permissions
+* Snowflake account with sufficient permissions
+* Power BI desktop
+* IGDB API Client ID and Secret
+
+## Getting started
+* [API setup](api_extract_data\README.md)
+* [Azure setup](IaC\README.md)
+* [Snowflake setup](sql\README.md)
+* [dbt setup](dbt_transformation_layer\README.md)
+* [Docker setup for Airflow](airflow_orchestration_layer\README.md)
+
+
+
+## Pipeline up and running
+
+After cloning this repo and following the guided setup steps for each component, running the pipeline is as simple as opening Docker desktop and running the following code in your terminal:
+
+```powershell
+cd .\airflow_orchestration_layer\
+docker compose up -d
+docker compose exec airflow-scheduler airflow dags trigger igdb_pipeline
+```
+
+To view the pipeline status, you can visit the Airflow UI on `http://localhost:8080/` (find the credentials in the container logs) or simply run the following in the terminal:
+
+```powershell
+docker compose exec airflow-scheduler airflow dags list-runs --dag-id igdb_pipeline
+```
+
+and that's it! In a few minutes you will see that the tables in Snowflake will be populated and ready to be referenced by Power BI (make sure to refresh the data within the dashboard).
+
+
 
 
 ## Project methodology and reasoning
 
 ### Architecture
+* An ELT approach was adopted to preserve raw source data integrity, with a clear Bronze → Silver → Gold layering, where Gold serves as the consumption layer.
+* The raw data is being ingested into the datawarehouse following a TRUNCATE + COPY INTO pattern as the main usecase is to get an overview of the most recently available information.
+
 ![Architecture](diagrams/Architecture.png)
 
-#### Tech Stack Rationale
+### Pipeline Overview
 
-* An ELT structure was adopted to preserve source data integrity, while providing a clear and logical progression through the Bronze, Silver, and Gold layers.
-* Python, Snowflake, and Power BI were selected as the core stack based on existing 
-proficiency, maximising both delivery speed and output quality.
-* dbt was used to handle the transformation layer within the ELT pipeline.
-* Utilizing Airflow to orchestrate the whole pipeline.
-* Source data is coming from the IGDB API, referencing multiple of it's endpoints.
-* Key-pair authentication is configured for the Snowflake service user to ensure secure access.
-
-
-
-
-## Getting started
-
-### IGDB API setup:
-
-In order to get the API Client ID and Secret, follow the steps outlined within the [documentation](https://api-docs.igdb.com/#account-creation).
-
-
-### Cloud setup:
-
-Within this project, Azure services were leveraged to built a production-like pipeline. Specifically, Azure Blob Storage and Key-vault were used to securely handle secrets and data storage. 
-
-The following section provides a high-over description of the steps required to set-up the specific details within the configuration in order to run the pipeline. It will not be a guide on how to work with these particular services and therefore already assumes a basic level of understanding, such as how to create secrets and a Blob container.
-
-#### Key-vault and handling sensitive information:
-
-After creating a Key-vault and adding the required secrets, we can take the following components (subscription id, resource-group name and key-valt name) and create a service principal (think of this like a technical user identity). 
-
-The output of the following code provides us with the tenant id, client id and secret.
-
-```powershell
-az ad sp create-for-rbac --name "airflow-local-dev" --role "Key Vault Secrets User" --scopes /subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.KeyVault/vaults/<vault-name>
 ```
-Place the components in the `example_env.txt` file so that the Python script can authenticate and fetch the secrets. Rename the file to `.env`.
-
-Afterwards, create the necessary secrets using the following code:
-
-```powershell
-az keyvault secret set --vault-name <vault-name> --name "<secret-name>" --value "secret value"
+Pipeline trigger
+      ↓
+Extract API
+      ↓
+Write data to Azure Blob Storage
+      ↓
+Load data into Snowflake Bronze layer (TRUNCATE & COPY INTO)
+      ↓
+dbt Transformations & Tests into Silver & Gold
 ```
 
-If facing trouble creating secrets this way, you might need to add the role *Key Vault Secrets Officer* to the account you are accessing the CLI with to create secrets.
+### Tech Stack Rationale
 
+**Core Tools**
+* **Python** handles data ingestion from the IGDB API across multiple endpoints.
+* **Azure Blob Storage** serves as the raw landing zone before data enters the warehouse. This adds a decoupling layer and raw data durability, at the cost of an extra hop before data reaches the warehouse.
+* **Snowflake** serves as the cloud data warehouse for storage and compute.
+* **dbt** manages all transformations within the Silver and Gold layers.
+* **Airflow** orchestrates the end-to-end pipeline, from ingestion through to transformation.
+* **Power BI** connects to the Gold layer for reporting and visualisation.
 
-By setting this up, we not only handle sensitive information securely from the start of development, but it also closely mimics the production setting with no code changes necessary.
+**Security**
+* Sensitive credentials are stored in **Azure Key Vault**.
+* Key-pair authentication is configured for the dbt and Power BI Snowflake service users.
+* Referencing secrets during the local development is kept as close as possible to referncing it in production.
 
-To run the project yourself, ensure that the following secrets are stored under the following name:
+**Tradeoffs**
+* **Airflow** is powerful for orchestration but adds infrastructure overhead; a lighter tool like Prefect could suffice for a pipeline of this scale.
+* By ingesting the data into the datawarehouse using a TRUNCATE + COPY INTO pattern the data is always up-to-date, but this also means we cannot extract insights based on trends over time as there are no historical records to reference. By landing the data extracts into the Azure Blob Storage before ingesting it into Snowflake the information is still available if the scope of the business requirements expands beyond snapshots.
 
-- *az-stor-access-key*
-- *az-stor-account-name*
-- *az-stor-container-name*
-- *igdb-client-id*
-- *igdb-client-secret*
-- *snowflake-account*
-- *snowflake-database*
-- *snowflake-password*
-- *snowflake-schema*
-- *snowflake-username*
-- *snowflake-warehouse*
-
-#### Cloud Storage:
-
-This project used Azure Blob Storage to store the data and the following steps give a high-over on how to set this up. The same steps would apply for GCS and S3 (GCP and AWS, respectively), but please refer to the Snowflake documentation for more details.
-
-* Create a Storage Account under said resource group.
-
-* Afterwards, create a Storage Container within this Storage Account.
-
-* Find the Tenant ID, within Azure AD
-
-* Fill in your Tenant ID and Container name in the code within `sql/stages/create_external_stage.sql` to create a storage integration.
-
-
-
-### Snowflake setup:
-
-Within this project, Snowflake was leveraged for it's datawarehouse capabilities.
-
-The following section provides a high-over description of the steps required to create the Snowflake objects used within this project. It will not be a guide on how to set-up a Snowflake account or how to navigate through the UI. Moreover, a basic level of understanding of SQL is required.
-
-* Continuing from the last step in the *Cloud Storage* setup, follow the remaining steps within the `sql/stages/create_external_stage.sql` file to provide Snwoflake with the required access to the Storage Account. This creates the external stage.
-
-* For one-time object creations execute the sql files in the `sql/database`, `sql/schemas`, `sql/tables` and `sql/users` folders, in that order. 
-
-### dbt setup:
-
-To create a Snowflake system user that dbt can utilize to authenticate and execute the transformations, we first need to use a key-pair authentication. I recommend using *openssl* for this, which is already included in Git Bash, or you can install it using PowerShell as follows:
-
-```powershell
-winget install -e --id ShiningLight.OpenSSL
-```
-
-* First, generate a private, unencrypted key:
-
-```powershell 
-openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
-```
-
-* Now generate a public key by referencing the private key:
-
-```powershell
-openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
-```
-
-* Copy-paste the public key content into the designated section within the `sql/users/dbt_system_user.sql` script and run it to create the role, user and grants needed for dbt to operate within Snowflake. 
-<MIGHT NEED TO SAY MORE ABOUT WHY WE SPECIFY CERTAIN SCHEMAS ETC'>
-
-
-If we want to initialize dbt we simply run 
-
-```powershell
-dbt init
-```
-
-and provide the requested information such as user, role and private key. Move the wkdir to the dbt project folder and test the connection by running:
-
-```powershell
-dbt debug
-```
-
-This is optional, but create an environment variable that points to the location of the *rsa_key.p8* file as such:
-
-```powershell
-$env:DBT_PRIVATE_KEY_PATH="C:\path\to\your\private_key.p8"
-```
-
- Afterwards, go to the `profiles.yml` and change the hardcoded path for *private_key_path* to utilize the environment variable.
-
-
-**Note:** the `profiles.yml` will be generated outside of the current wkdir and for the sake of file transparency I have moved that within the dbt project folder.
-
-
-### Docker setup:
-Assuming basic understanding and practical knowledge on containers and Docker, one can change the working directory to the `airflow_orchestration_layer` and run the following two commands to build and run the airflow docker image and container, respectively:
-
-```powershell
-docker compose build
-```
-
-```powershell
-docker compose up
-```
-
-After the containers are succesfully running, the Airflow UI can be accessed via `localhost:8080` in the browser. Note that the username and password are provided when docker spins up the containers.
-
-* GCHR login using Github PAT to pull dbt image
-
-```powershell
-docker login ghcr.io
-```
 
 
 ### What went wrong and learnings
 
 #### Optimizing too early:
-I really like incrementally loading my fact tables and wanted to implement this as well for the `IGDB.SILVER.CLEAN_APP` table and related bridge tables. However, I noticed that the run time on dbt grew quite significantly and that's when it hit me: the dataset for this project is too small to truly benefit from the optimization that incremental load brings.
+I really like incrementally loading my fact tables and wanted to implement this as well within the project. However, I noticed that the run time on dbt grew quite significantly, which is caused by the size of the dataset for this project; it is too small to truly benefit from the optimization that incremental load brings.
 
 Since the *incremental_strategy='append'* could very easily append duplicate records with the current setup and although *incremental_strategy='merge'* resolves this issue, it would have to make a full source/destination table scan with minor to no upside to show for it.
 
-Instead of optimizing too early by sacrificing transformation efficiency for a *'scalable'* load method, I made the concious choice of staying flexible in how we want to handle reducing transformation time in the future. The benefic is that the transformation time is **reduced to a third** of the incremental strategy.
+Instead of optimizing too early by sacrificing transformation efficiency for a *'scalable'* load method, I made the concious choice of staying flexible in how to handle reducing transformation time in the future, which also aligns with the ingestion pattern. The benefit is that the transformation time was **reduced to a third** of when the incremental strategy was applied.
 
 #### Windows file lock on dbt packages:
 For some reason, Windows likes to throw the following error whenever I run `dbt deps`:  
@@ -190,10 +124,28 @@ For some reason, Windows likes to throw the following error whenever I run `dbt 
 PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'dbt_packages\\dbt-utils-1.3.0'
 ```
 
-This occurs as dbt is trying to download a temporary file of the package, essentially copying + renaming the temp file and deleting it afterwards, which fails. I did not find the exact issue that was causing this, as this is not regular behaviour.
+This occurs as dbt is trying to download a temporary file of the package, essentially copying + renaming the temp file and deleting it afterwards, which fails.
 
 As this only occurs within my local environment during development and not within the dbt docker container, I did not spend more time and effort on this bug than my initial troubleshooting. What worked for me was deleting the temporary file manually after confirming that the copied file has been created succesfully.
 
-### To include in future iterations:
+#### Referencing the dbt user private key:
+I initially wanted to utilize the [Airflow cosmos library](https://github.com/astronomer/astronomer-cosmos), having an Airflow dag trigger the dbt commands for the transformations. The most straightforward way to do this would be by mounting the dbt project in the Docker volume. This raises the question on how to reference the private key that dbt needs to authenticatie to the Snowflake system user. Having finally figured out a way that satisfies my security standards, by pulling the Azure Secret that holds the private key contents and storing it in `/tmp/rsa_key.p8` within the container, I faced the following two additional problems:
 
-* dbt: package-lock.yml file caused issues when building the dbt image 
+* The private key must exist in every Airflow container that runs tasks.
+* `dbt deps` requires permission workarounds due to Windows/Linux volume ownership conflicts.
+
+ This introduces more risk in the form of additional points of failure than I am willing to accept within the context of this project. 
+
+The next best alternative, which turned out to be a better option, is to have dbt run in its own dedicated Docker container, completely isolated from Airflow.
+
+A dedicated dbt container solves both cleanly:
+
+* Private key fetched at container startup via `entrypoint.sh` and is therefore never baked into the image, just stored in the temporary storage `/tmp/rsa_key.p8`, which is RAM-backed and cleared when the container exits.
+* `dbt deps` runs at image build time, so no runtime workarounds needed.
+* As an additional benefit, dbt and Airflow dependency environments are then fully isolated.
+
+
+Airflow uses `DockerOperator` to spawn the dbt container per command, passing only
+the Azure Service Principal credentials (which are already passed on via the .env file or when scaling via e.g. a Kubernetes deployment manifest) needed to reach Key Vault and the private key that dbt needs to authenticate to its Snowflake system user. Airflow never
+touches the private key, it just sends a command to Docker and waits for the exit
+code to determine task success or failure.

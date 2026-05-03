@@ -1,0 +1,5 @@
+#### Power BI - Snowflake connection setup
+
+If you want to fully recreate the project, you also need to set-up the connection to the Snowflake account for Power BI to reference. The step-by-step guide on how to adjust the Snowflake connection is out of scope of the project guide, but it can be found on the [Microsoft documentation page](https://learn.microsoft.com/en-us/power-bi/connect-data/desktop-data-sources).
+
+However, in order to securely authenticate the Power BI user, I recommend following the same structured steps as were taken to create the dbt user in the [Snowflake setup](sql\README.md) and utilize the predefined `sql/users.pbi_system_users.sql` script to create the exact role required for PBI to read and reference the data in the dashboards. Do ensure that the file names for the set of key-pair credentials differ from the dbt set. I recommend adding a prefix *pbi_* to the second set of filenames and using that for the PBI user.

@@ -9,7 +9,7 @@ GRANT ROLE REPORTING TO ROLE SECURITYADMIN;
 CREATE USER IF NOT EXISTS POWERBI
     LOGIN_NAME = 'power_bi'
     TYPE = 'SERVICE'
-    RSA_PUBLIC_KEY = '<PUBLIC_KEY>'  -- Omitted due to security reasons
+    RSA_PUBLIC_KEY = '<PUBLIC_KEY>'  -- INPUT PUBLIC KEY HERE
     DEFAULT_ROLE = REPORTING
     COMMENT = 'Read-only service user for Power BI reporting on IGDB.GOLD'
 ;

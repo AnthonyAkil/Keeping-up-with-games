@@ -10,7 +10,7 @@ GRANT ROLE TRANSFORM TO ROLE SECURITYADMIN;
 CREATE USER IF NOT EXISTS dbt
     LOGIN_NAME = 'dbt'
     TYPE = 'SERVICE'
-    RSA_PUBLIC_KEY = "<PUBIC_KEY>"          -- Omitted due to security reasons
+    RSA_PUBLIC_KEY = "<PUBIC_KEY>"          -- INPUT PUBLIC KEY HERE
     DEFAULT_ROLE = TRANSFORM
     COMMENT = 'Service user that can be used with dbt.'
 ;
