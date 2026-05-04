@@ -59,7 +59,7 @@ docker compose exec airflow-scheduler airflow dags trigger igdb_pipeline
 To view the pipeline status, you can visit the Airflow UI on `http://localhost:8080/` (find the credentials in the container logs) or simply run the following in the terminal:
 
 ```powershell
-docker compose exec airflow-scheduler airflow dags list-runs --dag-id igdb_pipeline
+docker compose exec airflow-scheduler airflow dags list-runs igdb_pipeline
 ```
 
 and that's it! In a few minutes you will see that the tables in Snowflake will be populated and ready to be referenced by Power BI (make sure to refresh the data within the dashboard).
