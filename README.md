@@ -34,6 +34,8 @@ As of writing:
 * Snowflake account with sufficient permissions
 * Power BI desktop
 * IGDB API Client ID and Secret
+* Terraform (optional)
+* Azure CLI (recommended)
 
 ## Getting started
 * [API setup](api_extract_data/README.md)

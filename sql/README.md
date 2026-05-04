@@ -6,7 +6,7 @@ The following section provides a high-over description of the steps required to 
 
 #### External stage setup:
 
-After having created a Blob Container, follow the remaining steps within the `sql/stages/create_external_stage.sql` file, where you need to input your Azure Tenant ID, Storage Account name and Blob Container name, to provide Snowflake with the required access to the Storage Account and specified Containers.
+After following the [Azure resources setup steps](IaC/README.md) and having created a Blob Container, follow the remaining steps within the `sql/stages/create_external_stage.sql` file, where you need to input your Azure Tenant ID, Storage Account name and Blob Container name, to provide Snowflake with the required access to the Storage Account and specified Containers.
 
 #### dbt system user setup:
 

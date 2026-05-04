@@ -5,10 +5,19 @@ app.log
 *.p8
 *.pub
 
-#a airflow:
+# Airflow:
 .airflow
 
 # dbt:
 target/
 dbt_packages/
 logs/
+
+# Terraform:
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+terraform.tfvars
+crash.log
