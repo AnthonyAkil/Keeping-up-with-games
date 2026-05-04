@@ -7,9 +7,9 @@ AZURE_VAULT_URL = https://<key vault name>.vault.azure.net/
 
 
 ## IGDB API configurations that are non-sensitive:
-API_RATE_LIMIT            = 500
+API_RATE_LIMIT            = 500          # Refer to API doc
 API_RATE_LIMIT_DELAY      = 0.25         # 1 request / 0.25s
-MULTIQUERY_SIZE_LIMIT     = 7
+MULTIQUERY_SIZE_LIMIT     = 7            # Balancing query size (speed) vs error tolerance (setting it to 10 would result in more failed calls)
 AUTH_URL                  = https://id.twitch.tv/oauth2/token
 BASE_URL                  = https://api.igdb.com/v4/
 
